@@ -3,6 +3,8 @@ package dao.impl;
 import dao.BusDao;
 import dao.ConnectionFactory;
 import entity.Bus;
+import entity.Driver;
+import entity.Route;
 import org.apache.log4j.Logger;
 
 import java.lang.invoke.MethodHandles;
@@ -14,19 +16,40 @@ public class BusDaoImpl implements BusDao {
 
     private static final Logger LOG = Logger.getLogger(MethodHandles.lookup().lookupClass());
 
-    private static final String ID_COLUMN = "id";
-    private static final String MODEL_COLUMN = "model";
-    private static final String NUMBER_COLUMN = "number";
-    private static final String ROUTE_ID_COLUMN = "route_id";
-    private static final String DRIVER_ID_COLUMN = "driver_id";
+    private static final String ID_COLUMN = "buses.id";
+    private static final String MODEL_COLUMN = "buses.model";
+    private static final String BUS_NUMBER_COLUMN = "buses.number";
+    private static final String ROUTE_ID_COLUMN = "buses.route_id";
+    private static final String DRIVER_ID_COLUMN = "buses.driver_id";
+    private static final String READY_COLUMN = "buses.ready";
 
-    private static final String GET_ALL_QUERY = "SELECT * FROM buses;";
-    private static final String GET_BY_ID_QUERY = "SELECT * FROM buses WHERE id = ?;";
-    private static final String ADD_QUERY = "INSERT INTO buses (model, number, route_id, driver_id)" +
-            "VALUES (?, ?, ?, ?);";
+    private static final String FIRST_NAME_COLUMN = "drivers.first_name";
+    private static final String LAST_NAME_COLUMN = "drivers.last_name";
+
+    private static final String ROUTE_NUMBER_COLUMN = "routes.number";
+
+    private static final String GET_ALL_QUERY = "SELECT buses.id, buses.model, buses.number, " +
+            "buses.driver_id, buses.route_id, buses.ready, " +
+            "drivers.first_name, drivers.last_name, routes.number FROM buses " +
+            "LEFT OUTER JOIN drivers ON buses.driver_id = drivers.id " +
+            "LEFT OUTER JOIN routes ON buses.route_id = routes.id;";
+
+    private static final String GET_BY_ID_QUERY = "SELECT buses.id, buses.model, buses.number, " +
+            "buses.driver_id, buses.route_id, buses.ready, " +
+            "drivers.first_name, drivers.last_name, routes.number FROM buses " +
+            "LEFT OUTER JOIN drivers ON buses.driver_id = drivers.id " +
+            "LEFT OUTER JOIN routes ON buses.route_id = routes.id WHERE buses.id = ?;";
+
+    private static final String ADD_QUERY = "INSERT INTO buses (model, number, ready)" +
+            "VALUES (?, ?, ?);";
     private static final String DELETE_QUERY = "DELETE FROM buses WHERE id = ?;";
-    private static final String UPDATE_QUERY = "UPDATE buses SET model = ?, number = ?, " +
-            "route_id = ?, driver_id = ? WHERE id = ?;";
+    private static final String UPDATE_QUERY = "UPDATE buses SET model = ?, number = ?, driver_id = ? " +
+            "WHERE id = ?;";
+
+    private static final String SET_READY_QUERY = "UPDATE buses SET ready = true WHERE id = ?;";
+    private static final String SET_NOT_READY_QUERY = "UPDATE buses SET ready = false, " +
+            "route_id = null, driver_id = null WHERE id = ?";
+
 
     @Override
     public List<Bus> getAllBuses() {
@@ -41,9 +64,25 @@ public class BusDaoImpl implements BusDao {
                 Bus bus = new Bus();
                 bus.setId(resultSet.getInt(ID_COLUMN));
                 bus.setModel(resultSet.getString(MODEL_COLUMN));
-                bus.setNumber(resultSet.getString(NUMBER_COLUMN));
-                bus.setRoute_id(resultSet.getInt(ROUTE_ID_COLUMN));
-                bus.setDriver_id(resultSet.getInt(DRIVER_ID_COLUMN));
+                bus.setNumber(resultSet.getString(BUS_NUMBER_COLUMN));
+                bus.setReady(resultSet.getBoolean(READY_COLUMN));
+
+                Integer driverId = resultSet.getInt(DRIVER_ID_COLUMN);
+                if (!resultSet.wasNull()) {
+                    Driver driver = new Driver();
+                    driver.setId(driverId);
+                    driver.setFirstName(resultSet.getString(FIRST_NAME_COLUMN));
+                    driver.setLastName(resultSet.getString(LAST_NAME_COLUMN));
+                    bus.setDriver(driver);
+                }
+
+                Integer routeId = resultSet.getInt(ROUTE_ID_COLUMN);
+                if (!resultSet.wasNull()) {
+                    Route route = new Route();
+                    route.setId(routeId);
+                    route.setNumber(resultSet.getString(ROUTE_NUMBER_COLUMN));
+                    bus.setRoute(route);
+                }
                 buses.add(bus);
             }
 
@@ -70,13 +109,29 @@ public class BusDaoImpl implements BusDao {
             bus = new Bus();
             bus.setId(resultSet.getInt(ID_COLUMN));
             bus.setModel(resultSet.getString(MODEL_COLUMN));
-            bus.setNumber(resultSet.getString(NUMBER_COLUMN));
-            bus.setRoute_id(resultSet.getInt(ROUTE_ID_COLUMN));
-            bus.setDriver_id(resultSet.getInt(DRIVER_ID_COLUMN));
+            bus.setNumber(resultSet.getString(BUS_NUMBER_COLUMN));
+            bus.setReady(resultSet.getBoolean(READY_COLUMN));
+
+            Integer driverId = resultSet.getInt(DRIVER_ID_COLUMN);
+            if (!resultSet.wasNull()) {
+                Driver driver = new Driver();
+                driver.setId(driverId);
+                driver.setFirstName(resultSet.getString(FIRST_NAME_COLUMN));
+                driver.setLastName(resultSet.getString(LAST_NAME_COLUMN));
+                bus.setDriver(driver);
+            }
+
+            Integer routeId = resultSet.getInt(ROUTE_ID_COLUMN);
+            if (!resultSet.wasNull()) {
+                Route route = new Route();
+                route.setId(routeId);
+                route.setNumber(resultSet.getString(ROUTE_NUMBER_COLUMN));
+                bus.setRoute(route);
+            }
 
         } catch (SQLException e) {
             LOG.error("Could not get bus by id: " + id);
-        }finally {
+        } finally {
             if (resultSet != null) {
                 try {
                     resultSet.close();
@@ -89,7 +144,10 @@ public class BusDaoImpl implements BusDao {
     }
 
     @Override
-    public void addBus(Bus bus) {
+    public int addBus(Bus bus) {
+
+        int generatedId = -1;
+        ResultSet resultSet = null;
 
         try (Connection connection = ConnectionFactory.getConnection();
              PreparedStatement statement = connection.prepareStatement(ADD_QUERY,
@@ -97,13 +155,27 @@ public class BusDaoImpl implements BusDao {
 
             statement.setString(1, bus.getModel());
             statement.setString(2, bus.getNumber());
-            statement.setInt(3, bus.getRoute_id());
-            statement.setInt(4, bus.getDriver_id());
+            statement.setBoolean(3, true);
+
             statement.executeUpdate();
 
+            resultSet = statement.getGeneratedKeys();
+
+            if (resultSet.next()) {
+                generatedId = resultSet.getInt(1);
+            }
         } catch (SQLException e) {
             LOG.error("Could not add bus " + bus.getId());
+        } finally {
+            if (resultSet != null) {
+                try {
+                    resultSet.close();
+                } catch (SQLException e) {
+                    LOG.error("Could not close ResultSet instance in addBus() method");
+                }
+            }
         }
+        return generatedId;
     }
 
     @Override
@@ -128,14 +200,46 @@ public class BusDaoImpl implements BusDao {
 
             statement.setString(1, bus.getModel());
             statement.setString(2, bus.getNumber());
-            statement.setInt(3, bus.getRoute_id());
-            statement.setInt(4, bus.getDriver_id());
-            statement.setInt(5, bus.getId());
+
+            if(bus.getDriver() == null){
+                statement.setNull(3, 0);
+            }else{
+                statement.setInt(3, bus.getDriver().getId());
+            }
+            statement.setInt(4, bus.getId());
+
             statement.executeUpdate();
 
         } catch (SQLException e) {
             LOG.error("Could not update bus " + bus.getId());
 
+        }
+    }
+
+    @Override
+    public void setReady(int id) {
+
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement statement = connection.prepareStatement(SET_READY_QUERY)) {
+
+            statement.setInt(1, id);
+            statement.executeUpdate();
+
+        } catch (SQLException e) {
+            LOG.error("Could not set ready bus " + id);
+        }
+    }
+
+    @Override
+    public void setNotReady(int id) {
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement statement = connection.prepareStatement(SET_NOT_READY_QUERY)){
+
+            statement.setInt(1, id);
+            statement.executeUpdate();
+
+        }catch (SQLException e) {
+            LOG.error("Could not set not ready bus " + id);
         }
     }
 }

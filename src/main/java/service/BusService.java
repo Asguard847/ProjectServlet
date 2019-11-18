@@ -1,10 +1,10 @@
-package dao;
+package service;
 
 import entity.Bus;
 
 import java.util.List;
 
-public interface BusDao {
+public interface BusService {
 
     List<Bus> getAllBuses();
     Bus getBusById(int id);
