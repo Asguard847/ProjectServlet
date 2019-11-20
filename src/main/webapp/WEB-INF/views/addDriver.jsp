@@ -17,7 +17,7 @@
 
         <div class="form-group">
             <label for="firstName">First name</label>
-            <input type="text" name="firstName" class="form-Control"/>
+            <input type="text" name="firstName" class="form-Control" value="${driver.firstName}"/>
         </div>
 
         <c:if test="${not empty lNameVal}">
@@ -26,7 +26,7 @@
 
         <div class="form-group">
             <label for="lastName">Last name</label>
-            <input type="text" name="lastName" class="form-Control"/>
+            <input type="text" name="lastName" class="form-Control" value="${driver.lastName}"/>
         </div>
 
         <c:if test="${not empty phoneVal}">
@@ -35,7 +35,7 @@
 
         <div class="form-group">
             <label for="phone">Phone Number</label>
-            <input type="text" name="phone" class="form-Control"/>
+            <input type="text" name="phone" class="form-Control" value="${driver.phoneNumber}"/>
         </div>
 
         <c:if test="${not empty emailVal}">
@@ -44,7 +44,7 @@
 
         <div class="form-group">
             <label for="email">Email</label>
-            <input type="text" name="email" class="form-Control"/>
+            <input type="text" name="email" class="form-Control" value="${driver.email}"/>
         </div>
 
 

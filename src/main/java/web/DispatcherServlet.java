@@ -1,8 +1,5 @@
 package web;
 
-import service.impl.BusServiceImpl;
-import service.impl.DriverServiceImpl;
-import service.impl.RouteServiceImpl;
 import web.commands.Command;
 import web.commands.CommandFactory;
 
@@ -15,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static web.Constants.*;
+
 
 @WebServlet(value = "/app/*")
 @MultipartConfig(fileSizeThreshold = 1024 * 1024 * 2,
@@ -27,12 +24,7 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() throws ServletException {
-
         ctx = getServletContext();
-        ctx.setAttribute(DRIVER_SERVICE, new DriverServiceImpl());
-        ctx.setAttribute(BUS_SERVICE, new BusServiceImpl());
-        ctx.setAttribute(ROUTE_SERVICE, new RouteServiceImpl());
-
     }
 
     @Override

@@ -40,6 +40,8 @@ public class BusDaoImpl implements BusDao {
             "LEFT OUTER JOIN drivers ON buses.driver_id = drivers.id " +
             "LEFT OUTER JOIN routes ON buses.route_id = routes.id WHERE buses.id = ?;";
 
+    private static final String GET_FOR_ROUTE_QUERY = "SELECT COUNT(*) AS rowcount FROM buses WHERE route_id = ?";
+
     private static final String ADD_QUERY = "INSERT INTO buses (model, number, ready)" +
             "VALUES (?, ?, ?);";
     private static final String DELETE_QUERY = "DELETE FROM buses WHERE id = ?;";
@@ -61,28 +63,7 @@ public class BusDaoImpl implements BusDao {
              ResultSet resultSet = statement.executeQuery()) {
 
             while (resultSet.next()) {
-                Bus bus = new Bus();
-                bus.setId(resultSet.getInt(ID_COLUMN));
-                bus.setModel(resultSet.getString(MODEL_COLUMN));
-                bus.setNumber(resultSet.getString(BUS_NUMBER_COLUMN));
-                bus.setReady(resultSet.getBoolean(READY_COLUMN));
-
-                Integer driverId = resultSet.getInt(DRIVER_ID_COLUMN);
-                if (!resultSet.wasNull()) {
-                    Driver driver = new Driver();
-                    driver.setId(driverId);
-                    driver.setFirstName(resultSet.getString(FIRST_NAME_COLUMN));
-                    driver.setLastName(resultSet.getString(LAST_NAME_COLUMN));
-                    bus.setDriver(driver);
-                }
-
-                Integer routeId = resultSet.getInt(ROUTE_ID_COLUMN);
-                if (!resultSet.wasNull()) {
-                    Route route = new Route();
-                    route.setId(routeId);
-                    route.setNumber(resultSet.getString(ROUTE_NUMBER_COLUMN));
-                    bus.setRoute(route);
-                }
+                Bus bus = getBusFromResultSet(resultSet);
                 buses.add(bus);
             }
 
@@ -94,52 +75,45 @@ public class BusDaoImpl implements BusDao {
     }
 
     @Override
+    public int getCountForRoute(int id) {
+
+        int count = 0;
+
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement statement = connection.prepareStatement(GET_FOR_ROUTE_QUERY)) {
+
+            statement.setInt(1, id);
+
+            try (ResultSet resultSet = statement.executeQuery()){
+                resultSet.next();
+                count = resultSet.getInt("rowcount");
+            }
+        } catch (SQLException e) {
+            LOG.error("Could not get buses count for route: " + id);
+        }
+        return count;
+    }
+
+    @Override
     public Bus getBusById(int id) {
 
         Bus bus = null;
-        ResultSet resultSet = null;
 
         try (Connection connection = ConnectionFactory.getConnection();
              PreparedStatement statement = connection.prepareStatement(GET_BY_ID_QUERY)) {
 
             statement.setInt(1, id);
-            resultSet = statement.executeQuery();
-            resultSet.next();
 
-            bus = new Bus();
-            bus.setId(resultSet.getInt(ID_COLUMN));
-            bus.setModel(resultSet.getString(MODEL_COLUMN));
-            bus.setNumber(resultSet.getString(BUS_NUMBER_COLUMN));
-            bus.setReady(resultSet.getBoolean(READY_COLUMN));
-
-            Integer driverId = resultSet.getInt(DRIVER_ID_COLUMN);
-            if (!resultSet.wasNull()) {
-                Driver driver = new Driver();
-                driver.setId(driverId);
-                driver.setFirstName(resultSet.getString(FIRST_NAME_COLUMN));
-                driver.setLastName(resultSet.getString(LAST_NAME_COLUMN));
-                bus.setDriver(driver);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                resultSet.next();
+                bus = getBusFromResultSet(resultSet);
             }
 
-            Integer routeId = resultSet.getInt(ROUTE_ID_COLUMN);
-            if (!resultSet.wasNull()) {
-                Route route = new Route();
-                route.setId(routeId);
-                route.setNumber(resultSet.getString(ROUTE_NUMBER_COLUMN));
-                bus.setRoute(route);
-            }
 
         } catch (SQLException e) {
             LOG.error("Could not get bus by id: " + id);
-        } finally {
-            if (resultSet != null) {
-                try {
-                    resultSet.close();
-                } catch (SQLException e) {
-                    LOG.error("Could not close ResultSet instance in getBusById() method");
-                }
-            }
         }
+
         return bus;
     }
 
@@ -147,7 +121,6 @@ public class BusDaoImpl implements BusDao {
     public int addBus(Bus bus) {
 
         int generatedId = -1;
-        ResultSet resultSet = null;
 
         try (Connection connection = ConnectionFactory.getConnection();
              PreparedStatement statement = connection.prepareStatement(ADD_QUERY,
@@ -156,24 +129,15 @@ public class BusDaoImpl implements BusDao {
             statement.setString(1, bus.getModel());
             statement.setString(2, bus.getNumber());
             statement.setBoolean(3, true);
-
             statement.executeUpdate();
 
-            resultSet = statement.getGeneratedKeys();
-
-            if (resultSet.next()) {
-                generatedId = resultSet.getInt(1);
+            try(ResultSet resultSet = statement.getGeneratedKeys()){
+                if (resultSet.next()) {
+                    generatedId = resultSet.getInt(1);
+                }
             }
         } catch (SQLException e) {
             LOG.error("Could not add bus " + bus.getId());
-        } finally {
-            if (resultSet != null) {
-                try {
-                    resultSet.close();
-                } catch (SQLException e) {
-                    LOG.error("Could not close ResultSet instance in addBus() method");
-                }
-            }
         }
         return generatedId;
     }
@@ -201,9 +165,9 @@ public class BusDaoImpl implements BusDao {
             statement.setString(1, bus.getModel());
             statement.setString(2, bus.getNumber());
 
-            if(bus.getDriver() == null){
+            if (bus.getDriver() == null) {
                 statement.setNull(3, 0);
-            }else{
+            } else {
                 statement.setInt(3, bus.getDriver().getId());
             }
             statement.setInt(4, bus.getId());
@@ -233,13 +197,39 @@ public class BusDaoImpl implements BusDao {
     @Override
     public void setNotReady(int id) {
         try (Connection connection = ConnectionFactory.getConnection();
-             PreparedStatement statement = connection.prepareStatement(SET_NOT_READY_QUERY)){
+             PreparedStatement statement = connection.prepareStatement(SET_NOT_READY_QUERY)) {
 
             statement.setInt(1, id);
             statement.executeUpdate();
 
-        }catch (SQLException e) {
+        } catch (SQLException e) {
             LOG.error("Could not set not ready bus " + id);
         }
+    }
+
+    private Bus getBusFromResultSet(ResultSet resultSet) throws SQLException {
+        Bus bus = new Bus();
+        bus.setId(resultSet.getInt(ID_COLUMN));
+        bus.setModel(resultSet.getString(MODEL_COLUMN));
+        bus.setNumber(resultSet.getString(BUS_NUMBER_COLUMN));
+        bus.setReady(resultSet.getBoolean(READY_COLUMN));
+
+        Integer driverId = resultSet.getInt(DRIVER_ID_COLUMN);
+        if (!resultSet.wasNull()) {
+            Driver driver = new Driver();
+            driver.setId(driverId);
+            driver.setFirstName(resultSet.getString(FIRST_NAME_COLUMN));
+            driver.setLastName(resultSet.getString(LAST_NAME_COLUMN));
+            bus.setDriver(driver);
+        }
+
+        Integer routeId = resultSet.getInt(ROUTE_ID_COLUMN);
+        if (!resultSet.wasNull()) {
+            Route route = new Route();
+            route.setId(routeId);
+            route.setNumber(resultSet.getString(ROUTE_NUMBER_COLUMN));
+            bus.setRoute(route);
+        }
+        return bus;
     }
 }

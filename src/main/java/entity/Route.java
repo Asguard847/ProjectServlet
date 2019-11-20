@@ -7,6 +7,7 @@ public class Route {
     private String number;
     private String startPoint;
     private String endPoint;
+    private int length;
 
     public int getId() {
         return id;
@@ -38,5 +39,13 @@ public class Route {
 
     public void setEndPoint(String endPoint) {
         this.endPoint = endPoint;
+    }
+
+    public int getLength() {
+        return length;
+    }
+
+    public void setLength(int length) {
+        this.length = length;
     }
 }

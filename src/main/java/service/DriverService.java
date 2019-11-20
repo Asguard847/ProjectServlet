@@ -2,6 +2,7 @@ package service;
 
 import entity.Driver;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 public interface DriverService {
@@ -9,12 +10,13 @@ public interface DriverService {
     List<Driver> getAllDrivers();
     List<Driver> getFreeDrivers();
     Driver getDriverById(int id);
-    int addDriver(Driver driver);
-    void deleteDriver(int id);
-    void updateDriver(Driver driver);
-    void setReady(int id);
-    void setNotReady(int id);
-    void setFree(int id);
-    void setNotFree(int id);
+    void addDriver(HttpServletRequest request);
+    void deleteDriver(HttpServletRequest request);
+    void updateDriver(HttpServletRequest request);
+    void setReady(int id, boolean ready);
+
+    void setFree(int id, boolean ready);
+
+    boolean validateDriverInput(HttpServletRequest request);
 
 }

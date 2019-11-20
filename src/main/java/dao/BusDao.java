@@ -7,6 +7,7 @@ import java.util.List;
 public interface BusDao {
 
     List<Bus> getAllBuses();
+    int getCountForRoute(int id);
     Bus getBusById(int id);
     int addBus(Bus bus);
     void deleteBus(int id);

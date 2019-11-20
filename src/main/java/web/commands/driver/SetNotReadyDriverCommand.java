@@ -16,7 +16,7 @@ public class SetNotReadyDriverCommand implements Command {
     public Page perform(HttpServletRequest request, ServletContext ctx) {
         int id = (Integer) request.getAttribute("id");
         DriverService driverService = (DriverServiceImpl) ctx.getAttribute(DRIVER_SERVICE);
-        driverService.setNotReady(id);
+        driverService.setReady(id, false);
         return new Page("/app/admin/drivers", true);
     }
 }

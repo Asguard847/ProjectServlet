@@ -16,10 +16,9 @@ public class DeleteDriverCommand implements Command {
     @Override
     public Page perform(HttpServletRequest request, ServletContext ctx) {
 
-        int id = (Integer) request.getAttribute("id");
         DriverService driverService = (DriverServiceImpl) ctx.getAttribute(DRIVER_SERVICE);
-        driverService.deleteDriver(id);
-        ImageUtils.deleteImage(request, id);
+        driverService.deleteDriver(request);
+
         return new Page("/app/admin/drivers", true);
     }
 }

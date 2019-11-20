@@ -12,8 +12,7 @@ public interface DriverDao {
     int addDriver(Driver driver);
     void deleteDriver(int id);
     void updateDriver(Driver driver);
-    void setReady(int id);
-    void setNotReady(int id);
-    void setFree(int id);
-    void setNotFree(int id);
+    void setReady(int id, boolean ready);
+    void setFree(int id, boolean free);
+
 }

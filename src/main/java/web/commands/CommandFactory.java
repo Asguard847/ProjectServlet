@@ -31,8 +31,6 @@ public class CommandFactory {
         getCommandMap.put("/app/admin/buses/addBus", new AddBusGetCommand());
         getCommandMap.put("/app/admin/buses/deleteBus", new DeleteBusCommand());
         getCommandMap.put("/app/admin/buses/editBus", new EditBusGetCommand());
-        getCommandMap.put("/app/admin/buses/setReady", new SetReadyBusCommand());
-        getCommandMap.put("/app/admin/buses/setNotReady", new SetNotReadyBusCommand());
 
 
         postCommandMap.put("/app/admin/drivers/addDriver", new AddDriverPostCommand());

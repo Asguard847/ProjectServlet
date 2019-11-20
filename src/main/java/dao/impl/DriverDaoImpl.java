@@ -36,10 +36,8 @@ public class DriverDaoImpl implements DriverDao {
     private static final String DELETE_QUERY = "DELETE FROM drivers WHERE id = ?;";
     private static final String UPDATE_QUERY = "UPDATE drivers SET first_name = ?, last_name = ?, " +
             "phone_number = ?, email = ? WHERE id = ?;";
-    private static final String SET_READY_QUERY = "UPDATE drivers SET ready = true, free = true WHERE id = ?";
-    private static final String SET_NOT_READY_QUERY = "UPDATE drivers SET ready = false, free = true WHERE id = ?";
-    private static final String SET_FREE_QUERY = "UPDATE drivers SET free = true WHERE id = ?";
-    private static final String SET_NOT_FREE_QUERY = "UPDATE drivers SET free = false WHERE id = ?";
+    private static final String SET_READY_QUERY = "UPDATE drivers SET ready = ?, free = true WHERE id = ?";
+    private static final String SET_FREE_QUERY = "UPDATE drivers SET free = ? WHERE id = ?";
 
     private static final String REMOVE_FROM_BUS_QUERY = "UPDATE buses SET driver_id = null, route_id = null WHERE driver_id = ?;";
 
@@ -59,14 +57,7 @@ public class DriverDaoImpl implements DriverDao {
              ResultSet resultSet = statement.executeQuery()) {
 
             while (resultSet.next()) {
-                Driver driver = new Driver();
-                driver.setId(resultSet.getInt(ID_COLUMN));
-                driver.setFirstName(resultSet.getString(FIRST_NAME_COLUMN));
-                driver.setLastName(resultSet.getString(LAST_NAME_COLUMN));
-                driver.setPhoneNumber(resultSet.getString(PHONE_NUMBER_COLUMN));
-                driver.setEmail(resultSet.getString(EMAIL_COLUMN));
-                driver.setReady((resultSet.getBoolean(READY_COLUMN)));
-                driver.setFree((resultSet.getBoolean(FREE_COLUMN)));
+                Driver driver = getDriverFromResultSet(resultSet);
                 drivers.add(driver);
             }
 
@@ -86,14 +77,7 @@ public class DriverDaoImpl implements DriverDao {
              ResultSet resultSet = statement.executeQuery()) {
 
             while (resultSet.next()) {
-                Driver driver = new Driver();
-                driver.setId(resultSet.getInt(ID_COLUMN));
-                driver.setFirstName(resultSet.getString(FIRST_NAME_COLUMN));
-                driver.setLastName(resultSet.getString(LAST_NAME_COLUMN));
-                driver.setPhoneNumber(resultSet.getString(PHONE_NUMBER_COLUMN));
-                driver.setEmail(resultSet.getString(EMAIL_COLUMN));
-                driver.setReady(true);
-                driver.setFree(true);
+                Driver driver = getDriverFromResultSet(resultSet);
                 drivers.add(driver);
             }
 
@@ -106,43 +90,27 @@ public class DriverDaoImpl implements DriverDao {
     @Override
     public Driver getDriverById(int id) {
         Driver driver = null;
-        ResultSet resultSet = null;
 
         try (Connection connection = ConnectionFactory.getConnection();
              PreparedStatement statement = connection.prepareStatement(GET_BY_ID_QUERY)) {
 
             statement.setInt(1, id);
-            resultSet = statement.executeQuery();
-            resultSet.next();
 
-            driver = new Driver();
-            driver.setId(resultSet.getInt(ID_COLUMN));
-            driver.setFirstName(resultSet.getString(FIRST_NAME_COLUMN));
-            driver.setLastName(resultSet.getString(LAST_NAME_COLUMN));
-            driver.setPhoneNumber(resultSet.getString(PHONE_NUMBER_COLUMN));
-            driver.setEmail(resultSet.getString(EMAIL_COLUMN));
-            driver.setReady((resultSet.getBoolean(READY_COLUMN)));
-            driver.setFree((resultSet.getBoolean(FREE_COLUMN)));
-
+            try (ResultSet resultSet = statement.executeQuery()) {
+                resultSet.next();
+                driver = getDriverFromResultSet(resultSet);
+            }
         } catch (SQLException e) {
             LOG.error("Could not get driver by id: " + id);
-        } finally {
-            if (resultSet != null) {
-                try {
-                    resultSet.close();
-                } catch (SQLException e) {
-                    LOG.error("Could not close ResultSet instance in getDriverById() method");
-                }
-            }
         }
         return driver;
     }
+
 
     @Override
     public int addDriver(Driver driver) {
 
         int generatedId = -1;
-        ResultSet resultSet = null;
 
         try (Connection connection = ConnectionFactory.getConnection();
              PreparedStatement statement = connection.prepareStatement(ADD_QUERY,
@@ -160,36 +128,29 @@ public class DriverDaoImpl implements DriverDao {
             statement.setBoolean(6, true);
             statement.executeUpdate();
 
-            resultSet = statement.getGeneratedKeys();
+            try (ResultSet resultSet = statement.getGeneratedKeys()) {
 
-            if (resultSet.next()) {
-                generatedId = resultSet.getInt(1);
+                if (resultSet.next()) {
+                    generatedId = resultSet.getInt(1);
+                }
+
+                String password = generatePassword();
+                userStatement.setString(1, driver.getEmail());
+                userStatement.setString(2, encodePassword(password));
+                userStatement.setString(3, USER_AUTHORITY);
+                userStatement.setBoolean(4, true);
+                userStatement.executeUpdate();
+
+                connection.commit();
+
+                //TODO Send Email to User with credentials
             }
-
-            String password = generatePassword();
-            userStatement.setString(1, driver.getEmail());
-            userStatement.setString(2, encodePassword(password));
-            userStatement.setString(3, USER_AUTHORITY);
-            userStatement.setBoolean(4, true);
-            userStatement.executeUpdate();
-
-            connection.commit();
-
-            //TODO Send Email to User with credentials
-
         } catch (SQLException e) {
             LOG.error("Could not add driver " + driver.getId());
-        } finally {
-            if (resultSet != null) {
-                try {
-                    resultSet.close();
-                } catch (SQLException e) {
-                    LOG.error("Could not close ResultSet instance in addDriver() method");
-                }
-            }
         }
         return generatedId;
     }
+
 
     @Override
     public void deleteDriver(int id) {
@@ -224,12 +185,22 @@ public class DriverDaoImpl implements DriverDao {
     }
 
     @Override
-    public void setReady(int id) {
+    public void setReady(int id, boolean ready) {
         try (Connection connection = ConnectionFactory.getConnection();
-             PreparedStatement statement = connection.prepareStatement(SET_READY_QUERY)) {
+             PreparedStatement statement = connection.prepareStatement(SET_READY_QUERY);
+             PreparedStatement busStatement = connection.prepareStatement(REMOVE_FROM_BUS_QUERY)) {
 
-            statement.setInt(1, id);
+            connection.setAutoCommit(false);
+
+            statement.setBoolean(1, ready);
+            statement.setInt(2, id);
             statement.executeUpdate();
+
+            if (ready == false) {
+                busStatement.setInt(1, id);
+                busStatement.executeUpdate();
+            }
+            connection.commit();
 
         } catch (SQLException e) {
             LOG.error("Could not set ready driver " + id);
@@ -237,32 +208,12 @@ public class DriverDaoImpl implements DriverDao {
     }
 
     @Override
-    public void setNotReady(int id) {
-        try (Connection connection = ConnectionFactory.getConnection();
-             PreparedStatement statement = connection.prepareStatement(SET_NOT_READY_QUERY);
-             PreparedStatement busStatement = connection.prepareStatement(REMOVE_FROM_BUS_QUERY)){
-
-            connection.setAutoCommit(false);
-
-            statement.setInt(1, id);
-            statement.executeUpdate();
-
-            busStatement.setInt(1, id);
-            busStatement.executeUpdate();
-
-            connection.commit();
-
-        }catch (SQLException e) {
-            LOG.error("Could not set not ready driver " + id);
-        }
-    }
-
-    @Override
-    public void setFree(int id) {
+    public void setFree(int id, boolean free) {
         try (Connection connection = ConnectionFactory.getConnection();
              PreparedStatement statement = connection.prepareStatement(SET_FREE_QUERY)) {
 
-            statement.setInt(1, id);
+            statement.setBoolean(1, free);
+            statement.setInt(2, id);
             statement.executeUpdate();
 
         } catch (SQLException e) {
@@ -270,20 +221,7 @@ public class DriverDaoImpl implements DriverDao {
         }
     }
 
-    @Override
-    public void setNotFree(int id) {
-        try (Connection connection = ConnectionFactory.getConnection();
-             PreparedStatement statement = connection.prepareStatement(SET_NOT_FREE_QUERY)){
-
-            statement.setInt(1, id);
-            statement.executeUpdate();
-
-        }catch (SQLException e) {
-            LOG.error("Could not set not free driver " + id);
-        }
-    }
-
-    private String generatePassword(){
+    private String generatePassword() {
 
         PasswordGenerator gen = new PasswordGenerator();
         CharacterData lowerCaseChars = EnglishCharacterData.LowerCase;
@@ -303,10 +241,24 @@ public class DriverDaoImpl implements DriverDao {
         return password;
     }
 
-    private String encodePassword(String password){
-        if(encoder == null){
+    private String encodePassword(String password) {
+        if (encoder == null) {
             encoder = new BCryptPasswordEncoder();
         }
         return encoder.encode(password);
+    }
+
+    private Driver getDriverFromResultSet(ResultSet resultSet) throws SQLException {
+
+        Driver driver = new Driver();
+        driver.setId(resultSet.getInt(ID_COLUMN));
+        driver.setFirstName(resultSet.getString(FIRST_NAME_COLUMN));
+        driver.setLastName(resultSet.getString(LAST_NAME_COLUMN));
+        driver.setPhoneNumber(resultSet.getString(PHONE_NUMBER_COLUMN));
+        driver.setEmail(resultSet.getString(EMAIL_COLUMN));
+        driver.setReady((resultSet.getBoolean(READY_COLUMN)));
+        driver.setFree((resultSet.getBoolean(FREE_COLUMN)));
+
+        return driver;
     }
 }

@@ -17,7 +17,7 @@ public class SetReadyDriverCommand implements Command {
 
         int id = (Integer) request.getAttribute("id");
         DriverService driverService = (DriverServiceImpl) ctx.getAttribute(DRIVER_SERVICE);
-        driverService.setReady(id);
+        driverService.setReady(id, true);
         return new Page("/app/admin/drivers", true);
     }
 }
