@@ -1,7 +1,14 @@
 package web.commands;
 
+import web.commands.assignment.ApproveAssignmentCommand;
+import web.commands.assignment.AssignmentsCommand;
 import web.commands.bus.*;
 import web.commands.driver.*;
+import web.commands.login.LoginGetCommand;
+import web.commands.login.LoginPostCommand;
+import web.commands.login.LogoutCommand;
+import web.commands.route.*;
+import web.commands.user.UserCommand;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,6 +22,9 @@ public class CommandFactory {
     static{
         getCommandMap.put("/app/login", new LoginGetCommand());
         getCommandMap.put("/app/admin", new AdminCommand());
+        getCommandMap.put("/app/user", new UserCommand());
+        getCommandMap.put("/app/logout", new LogoutCommand());
+        getCommandMap.put("/app/user/approve", new ApproveAssignmentCommand());
 
         //Drivers
 
@@ -33,10 +43,23 @@ public class CommandFactory {
         getCommandMap.put("/app/admin/buses/editBus", new EditBusGetCommand());
 
 
+        getCommandMap.put("/app/admin/routes", new RoutesCommand());
+        getCommandMap.put("/app/admin/routes/addRoute", new AddRouteGetCommand());
+        getCommandMap.put("/app/admin/routes/deleteRoute", new DeleteRouteCommand());
+        getCommandMap.put("/app/admin/routes/editRoute", new EditRouteGetCommand());
+        getCommandMap.put("/app/admin/routes/deleteBusFromRoute", new RemoveBusFromRouteCommand());
+
+
+        getCommandMap.put("/app/admin/assignments", new AssignmentsCommand());
+
         postCommandMap.put("/app/admin/drivers/addDriver", new AddDriverPostCommand());
         postCommandMap.put("/app/admin/drivers/editDriver", new EditDriverPostCommand());
         postCommandMap.put("/app/admin/buses/addBus", new AddBusPostCommand());
         postCommandMap.put("/app/admin/buses/editBus", new EditBusPostCommand());
+        postCommandMap.put("/app/admin/routes/addRoute", new AddRoutePostCommand());
+        postCommandMap.put("/app/admin/routes/editRoute", new EditRoutePostCommand());
+        postCommandMap.put("/app/login", new LoginPostCommand());
+
     }
 
     private CommandFactory(){}

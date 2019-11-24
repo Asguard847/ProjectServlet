@@ -1,5 +1,8 @@
 package entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Route {
 
     private int id;
@@ -8,6 +11,12 @@ public class Route {
     private String startPoint;
     private String endPoint;
     private int length;
+    private List<Bus> buses = new ArrayList<>();
+    private int timeInterval;
+
+    public void addBus(Bus bus){
+        buses.add(bus);
+    }
 
     public int getId() {
         return id;
@@ -47,5 +56,21 @@ public class Route {
 
     public void setLength(int length) {
         this.length = length;
+    }
+
+    public List<Bus> getBuses() {
+        return buses;
+    }
+
+    public void setBuses(List<Bus> buses) {
+        this.buses = buses;
+    }
+
+    public int getTimeInterval() {
+        return timeInterval;
+    }
+
+    public void setTimeInterval(int timeInterval) {
+        this.timeInterval = timeInterval;
     }
 }

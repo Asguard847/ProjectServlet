@@ -8,7 +8,7 @@ public interface RouteDao {
 
     List<Route> getAllRoutes();
     Route getRouteById(int id);
-    void addRoute(Route route);
+    int addRoute(Route route);
     void deleteRoute(int id);
     void updateRoute(Route route);
 }

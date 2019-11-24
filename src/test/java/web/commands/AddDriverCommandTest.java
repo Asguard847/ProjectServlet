@@ -22,5 +22,4 @@ public class AddDriverCommandTest {
         Matcher matcher = pattern.matcher("+380637891786");
         assertTrue(matcher.matches());
     }
-
 }

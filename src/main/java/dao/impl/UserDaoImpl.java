@@ -31,34 +31,26 @@ public class UserDaoImpl implements UserDao {
 
     private BCryptPasswordEncoder encoder;
 
+    @Override
     public User getUserByUsername(String username) {
 
         User user = null;
-        ResultSet resultSet = null;
 
         try (Connection connection = ConnectionFactory.getConnection();
              PreparedStatement statement = connection.prepareStatement(GET_USER_QUERY)) {
 
             statement.setString(1, username);
-            resultSet = statement.executeQuery();
-            resultSet.next();
-
-            user = new User();
-            user.setUsername(username);
-            user.setPassword(resultSet.getString(PASSWORD_COLUMN));
-            user.setEnabled(resultSet.getBoolean(ENABLED_COLUMN));
-            user.setAuthority(resultSet.getString(AUTHORITY_COLUMN));
-
-        } catch (SQLException e) {
-            LOG.error("Could not get user");
-        } finally {
-            if (resultSet != null) {
-                try {
-                    resultSet.close();
-                } catch (SQLException e) {
-                    LOG.error("Could not close ResultSet instance in getUserByUsername() method");
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    user = new User();
+                    user.setUsername(username);
+                    user.setPassword(resultSet.getString(PASSWORD_COLUMN));
+                    user.setEnabled(resultSet.getBoolean(ENABLED_COLUMN));
+                    user.setAuthority(resultSet.getString(AUTHORITY_COLUMN));
                 }
             }
+        } catch (SQLException e) {
+            LOG.error("Could not get user");
         }
         return user;
     }
@@ -111,8 +103,8 @@ public class UserDaoImpl implements UserDao {
         }
     }
 
-    private String encodePassword(String password){
-        if(encoder == null){
+    private String encodePassword(String password) {
+        if (encoder == null) {
             encoder = new BCryptPasswordEncoder();
         }
         return encoder.encode(password);

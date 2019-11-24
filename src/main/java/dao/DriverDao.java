@@ -14,5 +14,6 @@ public interface DriverDao {
     void updateDriver(Driver driver);
     void setReady(int id, boolean ready);
     void setFree(int id, boolean free);
+    Driver getDriverByEmail(String email);
 
 }

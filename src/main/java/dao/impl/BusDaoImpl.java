@@ -40,7 +40,10 @@ public class BusDaoImpl implements BusDao {
             "LEFT OUTER JOIN drivers ON buses.driver_id = drivers.id " +
             "LEFT OUTER JOIN routes ON buses.route_id = routes.id WHERE buses.id = ?;";
 
-    private static final String GET_FOR_ROUTE_QUERY = "SELECT COUNT(*) AS rowcount FROM buses WHERE route_id = ?";
+    private static final String GET_READY_FOR_ROUTE = "SELECT buses.id, buses.model, buses.number, " +
+            "buses.driver_id, drivers.first_name, drivers.last_name FROM buses " +
+            "LEFT OUTER JOIN drivers ON buses.driver_id = drivers.id WHERE buses.driver_id IS NOT NULL " +
+            "AND buses.route_id IS NULL;";
 
     private static final String ADD_QUERY = "INSERT INTO buses (model, number, ready)" +
             "VALUES (?, ?, ?);";
@@ -52,7 +55,7 @@ public class BusDaoImpl implements BusDao {
     private static final String SET_NOT_READY_QUERY = "UPDATE buses SET ready = false, " +
             "route_id = null, driver_id = null WHERE id = ?";
 
-
+    private static final String SET_ROUTE_QUERY = "UPDATE buses SET route_id = ? WHERE id = ?;";
     @Override
     public List<Bus> getAllBuses() {
 
@@ -75,24 +78,24 @@ public class BusDaoImpl implements BusDao {
     }
 
     @Override
-    public int getCountForRoute(int id) {
+    public List<Bus> getReadyForRoute() {
 
-        int count = 0;
+        List<Bus> buses = new ArrayList<>();
 
         try (Connection connection = ConnectionFactory.getConnection();
-             PreparedStatement statement = connection.prepareStatement(GET_FOR_ROUTE_QUERY)) {
+             PreparedStatement statement = connection.prepareStatement(GET_READY_FOR_ROUTE);
+             ResultSet resultSet = statement.executeQuery()) {
 
-            statement.setInt(1, id);
-
-            try (ResultSet resultSet = statement.executeQuery()){
-                resultSet.next();
-                count = resultSet.getInt("rowcount");
+            while (resultSet.next()) {
+                Bus bus = getBusReadyForRouteFromResultSet(resultSet);
+                buses.add(bus);
             }
         } catch (SQLException e) {
-            LOG.error("Could not get buses count for route: " + id);
+            LOG.error("Could not get all buses ready for route assignment");
         }
-        return count;
+        return buses;
     }
+
 
     @Override
     public Bus getBusById(int id) {
@@ -131,13 +134,13 @@ public class BusDaoImpl implements BusDao {
             statement.setBoolean(3, true);
             statement.executeUpdate();
 
-            try(ResultSet resultSet = statement.getGeneratedKeys()){
+            try (ResultSet resultSet = statement.getGeneratedKeys()) {
                 if (resultSet.next()) {
                     generatedId = resultSet.getInt(1);
                 }
             }
         } catch (SQLException e) {
-            LOG.error("Could not add bus " + bus.getId());
+            LOG.error("Could not add bus " + generatedId);
         }
         return generatedId;
     }
@@ -207,6 +210,25 @@ public class BusDaoImpl implements BusDao {
         }
     }
 
+    @Override
+    public void setRoute(int busId, int routeId) {
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement statement = connection.prepareStatement(SET_ROUTE_QUERY)) {
+
+            if(routeId==0){
+                statement.setNull(1, 0);
+            }else{
+                statement.setInt(1, routeId);
+            }
+
+            statement.setInt(2, busId);
+            statement.executeUpdate();
+
+        } catch (SQLException e) {
+            LOG.error("Could not set route for bus " + busId);
+        }
+    }
+
     private Bus getBusFromResultSet(ResultSet resultSet) throws SQLException {
         Bus bus = new Bus();
         bus.setId(resultSet.getInt(ID_COLUMN));
@@ -230,6 +252,22 @@ public class BusDaoImpl implements BusDao {
             route.setNumber(resultSet.getString(ROUTE_NUMBER_COLUMN));
             bus.setRoute(route);
         }
+        return bus;
+    }
+
+    private Bus getBusReadyForRouteFromResultSet(ResultSet resultSet) throws SQLException {
+
+        Bus bus = new Bus();
+        bus.setId(resultSet.getInt(ID_COLUMN));
+        bus.setModel(resultSet.getString(MODEL_COLUMN));
+        bus.setNumber(resultSet.getString(BUS_NUMBER_COLUMN));
+
+        Driver driver = new Driver();
+        driver.setId(resultSet.getInt(DRIVER_ID_COLUMN));
+        driver.setFirstName(resultSet.getString(FIRST_NAME_COLUMN));
+        driver.setLastName(resultSet.getString(LAST_NAME_COLUMN));
+        bus.setDriver(driver);
+
         return bus;
     }
 }

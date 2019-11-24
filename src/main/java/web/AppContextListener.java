@@ -1,9 +1,7 @@
 package web;
 
 import org.apache.log4j.Logger;
-import service.impl.BusServiceImpl;
-import service.impl.DriverServiceImpl;
-import service.impl.RouteServiceImpl;
+import service.impl.*;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
@@ -25,11 +23,13 @@ public class AppContextListener implements ServletContextListener {
         ctx.setAttribute(DRIVER_SERVICE, new DriverServiceImpl());
         ctx.setAttribute(BUS_SERVICE, new BusServiceImpl());
         ctx.setAttribute(ROUTE_SERVICE, new RouteServiceImpl());
+        ctx.setAttribute(ASSIGNMENT_SERVICE, new AssignmentServiceImpl());
+        ctx.setAttribute(USER_SERVICE, new UserServiceImpl());
         LOG.info("Servlet context initialized");
     }
 
     @Override
     public void contextDestroyed(ServletContextEvent servletContextEvent) {
-        LOG.info("Servlrt context destroyed");
+        LOG.info("Servlet context destroyed");
     }
 }

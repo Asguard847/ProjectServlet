@@ -8,6 +8,7 @@ import java.util.List;
 public interface BusService {
 
     List<Bus> getAllBuses(HttpServletRequest request);
+    List<Bus> getReadyForRoute();
     Bus getBusById(int id);
     int addBus(HttpServletRequest request);
     void deleteBus(int id);
@@ -15,4 +16,7 @@ public interface BusService {
     void setReady(int id);
     void setNotReady(int id);
     boolean validateBusInput(HttpServletRequest request);
+    void addBusToRoute(HttpServletRequest request);
+    void removeBusFromRoute(HttpServletRequest request);
+
 }

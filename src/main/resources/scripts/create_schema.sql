@@ -43,3 +43,14 @@ primary key (id)),
 constraint c_users
 foreign key (username) references drivers(email)
 on delete cascade on update cascade);
+
+create table assignments(
+id int auto_increment,
+route_id int,
+bus_id int,
+driver_id int,
+approved DATE,
+cancelled DATE,
+created DATE,
+primary key (id));
+

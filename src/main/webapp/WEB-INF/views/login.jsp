@@ -11,7 +11,7 @@
                 <div class="msg">${msg}</div>
             </c:if>
 
-            <form name="loginForm" action="<c:url value="/login" />" method="post">
+            <form name="loginForm" action="<c:url value="/app/login" />" method="post">
                 <c:if test="${not empty error}">
                     <div class="error" style="color: #ff0000">${error }</div>
                 </c:if>
@@ -27,9 +27,7 @@
 
                 <input type="submit" value="Submit" class="btn btn-default">
 
-                <input type="hidden" name="_csrf" value="${_csrf.token}" />
-
-            </form>
+                </form>
  </div>
     </div>
 </div>

@@ -64,29 +64,20 @@
                 </div>
                 <div id="navbar" class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">
-                        <li><a href="<c:url value="/app/login" />">Login</a></li>
-                        <li><a href="<c:url value="/product/productList" />">Products</a></li>
-                        <li><a href="#contact">Contact</a></li>
+                      <c:if test="${user.authority == 'ROLE_ADMIN'}">
+                         <li><a href="<c:url value="/app/admin"/> ">Admin</a></li>
+                      </c:if>
                     </ul>
                     <ul class="nav navbar-nav pull-right">
 
                       <%--  Check if user is logged in--%>
 
-                        <c:if test="${pageContext.request.userPrincipal.name != null}">
-                            <li><a>Welcome: ${pageContext.request.userPrincipal.name}</a></li>
-                            <li><a href="<c:url value="/logout"/> ">Logout</a></li>
-                            <c:if test="${pageContext.request.userPrincipal.name != 'admin'}">
-                                <li><a href="<c:url value="/customer/cart"/> ">Cart</a> </li>
-                            </c:if>
-                            <c:if test="${pageContext.request.userPrincipal.name == 'admin'}">
-                                <li><a href="<c:url value="/admin"/> ">Admin</a> </li>
-                            </c:if>
+                        <c:if test="${user != null}">
+                            <li><a href="<c:url value="/app/logout"/> ">Logout</a></li>
+
 
                         </c:if>
-                          <c:if test="${pageContext.request.userPrincipal.name == null}">
-                        <li> <a href="<c:url value="/login" />">Login</a></li>
-                        <li> <a href="<c:url value="/register" />">Register</a></li>
-                          </c:if>
+
                     </ul>
                 </div>
             </div>

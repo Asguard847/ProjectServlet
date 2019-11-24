@@ -10,6 +10,7 @@ public interface DriverService {
     List<Driver> getAllDrivers();
     List<Driver> getFreeDrivers();
     Driver getDriverById(int id);
+    Driver getDriverByEmail(String email);
     void addDriver(HttpServletRequest request);
     void deleteDriver(HttpServletRequest request);
     void updateDriver(HttpServletRequest request);

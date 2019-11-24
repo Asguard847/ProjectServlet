@@ -31,20 +31,20 @@
                 <th></th>
             </tr>
             </thead>
-            <c:forEach items="${buses}" var="bus">
+            <c:forEach items="${routes}" var="route">
                 <tr>
                     <td>${route.number}</td>
                     <td>${route.startPoint}</td>
-                    <td>${route.endPoint} ${bus.driver.lastName}</td>
+                    <td>${route.endPoint}</td>
                     <td><c:choose>
-                            <c:when test="${count == 0}">
-                                   <p style="color: crimson">${count}</p>
+                            <c:when test="${route.buses.size() == 0}">
+                                   <p style="color: crimson">${route.buses.size()}</p>
                             </c:when>
                             <c:otherwise>
-                                    <p>${count}</p>
+                                    <p>${route.buses.size()}</p>
                             </c:otherwise>
                     </c:choose></td>
-                    <td>${timeInterval}</td>
+                    <td>${route.timeInterval}</td>
                     <td>
                         <a href="<c:url value="/app/admin/routes/deleteRoute/${route.id}"/>">
                             <button type="button" class="btn btn-danger">Delete</button></a>

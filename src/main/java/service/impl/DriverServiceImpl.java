@@ -55,6 +55,11 @@ public class DriverServiceImpl implements DriverService {
     }
 
     @Override
+    public Driver getDriverByEmail(String email) {
+        return driverDao.getDriverByEmail(email);
+    }
+
+    @Override
     public void addDriver(HttpServletRequest request) {
 
         Driver driver = getDriverFromRequest(request);

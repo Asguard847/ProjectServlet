@@ -5,12 +5,14 @@ import dao.impl.BusDaoImpl;
 import entity.Bus;
 import entity.Driver;
 import org.springframework.validation.ValidationUtils;
+import service.AssignmentService;
 import service.BusService;
 import service.DriverService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
+import static web.Constants.ASSIGNMENT_SERVICE;
 import static web.Constants.DRIVER_SERVICE;
 
 public class BusServiceImpl implements BusService {
@@ -40,6 +42,11 @@ public class BusServiceImpl implements BusService {
     }
 
     @Override
+    public List<Bus> getReadyForRoute() {
+        return busDao.getReadyForRoute();
+    }
+
+    @Override
     public Bus getBusById(int id) {
 
         return busDao.getBusById(id);
@@ -62,6 +69,8 @@ public class BusServiceImpl implements BusService {
 
         DriverService driverService = (DriverServiceImpl) request.getServletContext()
                 .getAttribute(DRIVER_SERVICE);
+        AssignmentService assignmentService = (AssignmentServiceImpl) request.getServletContext()
+                .getAttribute(ASSIGNMENT_SERVICE);
 
         int id = (Integer) request.getAttribute(ID);
         String ready = request.getParameter(READY);
@@ -77,6 +86,7 @@ public class BusServiceImpl implements BusService {
                 if (oldDriver != null) {
                     bus.setDriver(null);
                     driverService.setFree(oldDriver.getId(), true);
+                    assignmentService.cancelForDriver(oldDriver.getId());
                 }
             } else {
 
@@ -88,6 +98,7 @@ public class BusServiceImpl implements BusService {
 
                 if (oldDriver != null) {
                     driverService.setFree(oldDriver.getId(), true);
+                    assignmentService.cancelForDriver(oldDriver.getId());
                 }
             }
         } else {
@@ -95,6 +106,7 @@ public class BusServiceImpl implements BusService {
             bus.setDriver(null);
             if (oldDriver != null) {
                 driverService.setFree(oldDriver.getId(), true);
+                assignmentService.cancelForDriver(oldDriver.getId());
             }
         }
         bus.setNumber(request.getParameter(NUMBER));
@@ -131,6 +143,21 @@ public class BusServiceImpl implements BusService {
         request.setAttribute("bus", bus);
 
         return inputIncorrect;
+    }
+
+    @Override
+    public void addBusToRoute(HttpServletRequest request) {
+
+        String busId = request.getParameter("busSelect");
+        int routeId = (Integer) request.getAttribute("id");
+        busDao.setRoute(Integer.parseInt(busId), routeId);
+    }
+
+    @Override
+    public void removeBusFromRoute(HttpServletRequest request) {
+
+        int busId = (Integer)request.getAttribute("id");
+        busDao.setRoute(busId, 0);
     }
 
     private boolean validateBusNumber(String number) {

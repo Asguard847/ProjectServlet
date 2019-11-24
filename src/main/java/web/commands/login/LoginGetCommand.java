@@ -1,7 +1,8 @@
-package web.commands;
+package web.commands.login;
 
 import web.Constants;
 import web.Page;
+import web.commands.Command;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;

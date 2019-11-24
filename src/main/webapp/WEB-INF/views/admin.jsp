@@ -17,6 +17,14 @@
         </div>
 
         <h3>
+           <a href="<c:url value="/app/admin/assignments" />" >Manage assignments</a>
+        </h3>
+
+        <p>Here you can view, check and modify assignments</p>
+
+        <br><br>
+
+        <h3>
             <a href="<c:url value="/app/admin/routes" />" >Manage routes</a>
         </h3>
 
