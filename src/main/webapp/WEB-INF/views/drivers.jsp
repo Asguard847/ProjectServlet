@@ -13,9 +13,9 @@
 <div class="container-wrapper">
     <div class="container">
         <div class="page-header">
-            <h1>Driver inventory page</h1>
-            <p class="lead">This is driver inventory page</p>
-            <a href="<c:url value="/app/admin/drivers/addDriver" />"class="btn btn-primary">Add driver</a>
+            <h1><fmt:message key = "driver.header"/></h1>
+            <p class="lead"><fmt:message key = "driver.this"/></p>
+            <a href="<c:url value="/app/admin/drivers/addDriver" />"class="btn btn-primary"><fmt:message key = "driver.add"/></a>
         </div>
 
 
@@ -23,11 +23,11 @@
         <table class="table table-striped table-hover">
             <thead>
             <tr class="bg-success">
-                <th>Photo Thumb</th>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Phone number</th>
-                <th>Ready</th>
+                <th><fmt:message key = "driver.photo"/></th>
+                <th><fmt:message key = "driver.first"/></th>
+                <th><fmt:message key = "driver.last"/></th>
+                <th><fmt:message key = "driver.phone"/></th>
+                <th><fmt:message key = "driver.ready"/></th>
                 <th></th>
             </tr>
             </thead>
@@ -40,25 +40,25 @@
                     <td><c:choose>
                              <c:when test="${driver.ready==true}">
                              <a href="<c:url value="/app/admin/drivers/setNotReady/${driver.id}"/>">
-                                  <p style="color: green">ready</p>
+                                  <p style="color: green"><fmt:message key = "driver.ready"/></p>
                              </c:when>
                              <c:otherwise>
                               <a href="<c:url value="/app/admin/drivers/setReady/${driver.id}"/>">
-                                  <p style="color: crimson">not ready</p>
+                                  <p style="color: crimson"><fmt:message key = "driver.notready"/></p>
                              </c:otherwise>
                     </c:choose></td>
                     <td>
                         <a href="<c:url value="/app/admin/drivers/deleteDriver/${driver.id}"/>">
-                            <button type="button" class="btn btn-danger">Delete</button></a>
+                            <button type="button" class="btn btn-danger"><fmt:message key = "button.delete"/></button></a>
                         <a href="<c:url value="/app/admin/drivers/editDriver/${driver.id}"/>">
-                            <button type="button" class="btn btn-warning">Edit</button></a>
+                            <button type="button" class="btn btn-warning"><fmt:message key = "button.edit"/></button></a>
                     </td>
 
                 </tr>
             </c:forEach>
         </table>
 
-        <a href="<c:url value="/app/admin/drivers/addDriver" />"class="btn btn-primary">Add driver</a>
+        <a href="<c:url value="/app/admin/drivers/addDriver" />"class="btn btn-primary"><fmt:message key = "driver.add"/></a>
 
 
 <%@include file="/WEB-INF/views/template/footer.jsp"%>

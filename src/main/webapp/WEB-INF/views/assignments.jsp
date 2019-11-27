@@ -13,20 +13,20 @@
 <div class="container-wrapper">
     <div class="container">
         <div class="page-header">
-            <h1>Assignments page</h1>
-            <p class="lead">This is assignments page</p>
+            <h1><fmt:message key = "assignments.page"/></h1>
+            <p class="lead"><fmt:message key = "assignments.this"/></p>
         </div>
 
 
         <table class="table table-striped table-hover">
             <thead>
             <tr class="bg-success">
-                <th>Created</th>
-                <th>Driver</th>
-                <th>Bus</th>
-                <th>Route</th>
-                <th>Approved</th>
-                <th>Cancelled</th>
+                <th><fmt:message key = "assignments.created"/></th>
+                <th><fmt:message key = "routes.driver"/></th>
+                <th><fmt:message key = "user.bus"/></th>
+                <th><fmt:message key = "user.route"/></th>
+                <th><fmt:message key = "assignments.approved"/></th>
+                <th><fmt:message key = "assignments.cancelled"/></th>
             </tr>
             </thead>
             <c:forEach items="${assignments}" var="assignment">

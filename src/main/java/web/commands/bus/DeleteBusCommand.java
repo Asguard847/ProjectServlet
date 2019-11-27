@@ -13,11 +13,16 @@ import static web.Constants.BUS_SERVICE;
 public class DeleteBusCommand implements Command {
 
     @Override
-    public Page perform(HttpServletRequest request, ServletContext ctx) {
+    public Page performGet(HttpServletRequest request, ServletContext ctx) {
 
         int id = (Integer) request.getAttribute("id");
         BusService service = (BusServiceImpl) ctx.getAttribute(BUS_SERVICE);
         service.deleteBus(id);
         return new Page ("/app/admin/buses", true);
+    }
+
+    @Override
+    public Page performPost(HttpServletRequest request, ServletContext ctx) {
+        return null;
     }
 }

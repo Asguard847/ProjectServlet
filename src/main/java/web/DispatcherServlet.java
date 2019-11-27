@@ -52,9 +52,14 @@ public class DispatcherServlet extends HttpServlet {
         }
 
 
-        Command command = CommandFactory.getCommand(path, request.getMethod());
+        Command command = CommandFactory.getCommand(path);
+        Page page = null;
 
-        Page page = command.perform(request, ctx);
+        if("GET".equals(request.getMethod())){
+            page = command.performGet(request, ctx);
+        }else{
+            page = command.performPost(request, ctx);
+        }
 
         if (page.isRedirect()) {
             response.sendRedirect(page.getUrl());

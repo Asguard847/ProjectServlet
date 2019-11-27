@@ -4,7 +4,8 @@
     <div class="container">
         <div id="login-box">
 
-            <h2>Sorry, requested page not found</h2>
+            <h2><fmt:message key = "error"/> 404</h2>
+            <h3><fmt:message key = "404"/></h3>
 
            </div>
     </div>

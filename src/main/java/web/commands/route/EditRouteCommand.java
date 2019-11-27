@@ -18,24 +18,40 @@ import java.util.List;
 
 import static web.Constants.*;
 
-public class EditRoutePostCommand implements Command {
-    @Override
-    public Page perform(HttpServletRequest request, ServletContext ctx) {
+public class EditRouteCommand implements Command {
 
+    @Override
+    public Page performGet(HttpServletRequest request, ServletContext ctx) {
+
+        RouteService routeService = (RouteServiceImpl) ctx.getAttribute(ROUTE_SERVICE);
+        BusService busService = (BusServiceImpl) ctx.getAttribute(BUS_SERVICE);
+
+        int routeId = (Integer) request.getAttribute("id");
+        Route route = routeService.getRouteById(routeId);
+        request.setAttribute("route", route);
+
+        List<Bus> buses = busService.getReadyForRoute();
+        request.setAttribute("buses", buses);
+
+        return new Page(PREFIX + "editRoute" + POSTFIX);
+    }
+
+    @Override
+    public Page performPost(HttpServletRequest request, ServletContext ctx) {
         RouteService routeService = (RouteServiceImpl) ctx.getAttribute(ROUTE_SERVICE);
         BusService busService = (BusServiceImpl) ctx.getAttribute(BUS_SERVICE);
         AssignmentService assignmentService = (AssignmentServiceImpl) ctx.getAttribute(ASSIGNMENT_SERVICE);
 
         String busId = request.getParameter("busSelect");
 
-        if(routeService.validateRouteInput(request)){
+        if (routeService.validateRouteInput(request)) {
             addRouteToRequest(request, routeService);
             addBusesToRequest(request, busService);
             return new Page(PREFIX + "editRoute" + POSTFIX);
         }
 
         routeService.updateRoute(request);
-        if("none".equals(busId)){
+        if ("none".equals(busId)) {
             return new Page("/app/admin/routes", true);
         }
 
@@ -50,14 +66,15 @@ public class EditRoutePostCommand implements Command {
         return new Page(PREFIX + "editRoute" + POSTFIX);
     }
 
-    private void addRouteToRequest(HttpServletRequest request, RouteService routeService){
+    private void addRouteToRequest(HttpServletRequest request, RouteService routeService) {
         int routeId = (Integer) request.getAttribute("id");
         Route route = routeService.getRouteById(routeId);
         request.setAttribute("route", route);
     }
 
-    private void addBusesToRequest(HttpServletRequest request,BusService busService){
+    private void addBusesToRequest(HttpServletRequest request, BusService busService) {
         List<Bus> buses = busService.getReadyForRoute();
         request.setAttribute("buses", buses);
     }
 }
+

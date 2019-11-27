@@ -21,7 +21,7 @@ import static web.Constants.POSTFIX;
 
 public class RemoveBusFromRouteCommand implements Command {
     @Override
-    public Page perform(HttpServletRequest request, ServletContext ctx) {
+    public Page performGet(HttpServletRequest request, ServletContext ctx) {
 
         BusService busService = (BusServiceImpl) ctx.getAttribute(BUS_SERVICE);
         RouteService routeService = (RouteServiceImpl) ctx.getAttribute(ROUTE_SERVICE);
@@ -42,5 +42,10 @@ public class RemoveBusFromRouteCommand implements Command {
 
         return new Page(PREFIX + "editRoute" + POSTFIX);
 
+    }
+
+    @Override
+    public Page performPost(HttpServletRequest request, ServletContext ctx) {
+        return null;
     }
 }

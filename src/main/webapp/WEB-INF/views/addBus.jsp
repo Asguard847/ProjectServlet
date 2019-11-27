@@ -4,9 +4,9 @@
 <div class="container-wrapper">
     <div class="container">
         <div class="page-header">
-            <h1>Add bus</h1>
+            <h1><fmt:message key = "add.bus.header"/></h1>
 
-            <p class="lead">Fill the below information to add bus</p>
+            <p class="lead"><fmt:message key = "add.bus.fill"/></p>
         </div>
 
          <form name="addBusForm" action="<c:url value="/app/admin/buses/addBus"/>" method="post">
@@ -16,7 +16,7 @@
         </c:if>
 
             <div class="form-group">
-            <label for="number">Number</label>
+            <label for="number"><fmt:message key = "routes.number"/></label>
             <input type="text" name="number" class="form-Control"/>
         </div>
 
@@ -25,12 +25,12 @@
         </c:if>
 
             <div class="form-group">
-            <label for="model">Model</label>
+            <label for="model"><fmt:message key = "routes.model"/></label>
             <input type="text" name="model" class="form-Control"/>
         </div>
 
         <br><br>
-        <input type="submit" value="Submit" class="btn btn-default">
+        <input type="submit" value="<fmt:message key = "button.submit"/>" class="btn btn-default">
 
         </form>
 

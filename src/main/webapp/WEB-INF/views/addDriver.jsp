@@ -4,9 +4,9 @@
 <div class="container-wrapper">
     <div class="container">
         <div class="page-header">
-            <h1>Add driver</h1>
+            <h1><fmt:message key = "driver.add"/></h1>
 
-            <p class="lead">Fill the below information to add driver</p>
+            <p class="lead"><fmt:message key = "add.driver.fill"/></p>
         </div>
 
          <form name="addDriverForm" action="<c:url value="/app/admin/drivers/addDriver"/>" method="post" enctype="multipart/form-data">
@@ -16,7 +16,7 @@
          </c:if>
 
         <div class="form-group">
-            <label for="firstName">First name</label>
+            <label for="firstName"><fmt:message key = "driver.first"/></label>
             <input type="text" name="firstName" class="form-Control" value="${driver.firstName}"/>
         </div>
 
@@ -25,7 +25,7 @@
         </c:if>
 
         <div class="form-group">
-            <label for="lastName">Last name</label>
+            <label for="lastName"><fmt:message key = "driver.last"/></label>
             <input type="text" name="lastName" class="form-Control" value="${driver.lastName}"/>
         </div>
 
@@ -34,7 +34,7 @@
         </c:if>
 
         <div class="form-group">
-            <label for="phone">Phone Number</label>
+            <label for="phone"><fmt:message key = "driver.phone"/></label>
             <input type="text" name="phone" class="form-Control" value="${driver.phoneNumber}"/>
         </div>
 
@@ -43,19 +43,19 @@
         </c:if>
 
         <div class="form-group">
-            <label for="email">Email</label>
+            <label for="email"><fmt:message key = "driver.email"/></label>
             <input type="text" name="email" class="form-Control" value="${driver.email}"/>
         </div>
 
 
 
         <div class="form-group">
-            <label class="control-label" for="driverImage">Upload Image</label>
+            <label class="control-label" for="driverImage"><fmt:message key = "driver.image"/></label>
             <input type="file" name="driverImage" class="form:input-large"/>
         </div>
 
         <br><br>
-        <input type="submit" value="Submit" class="btn btn-default">
+        <input type="submit" value="<fmt:message key = "button.submit"/>" class="btn btn-default">
 
         </form>
 

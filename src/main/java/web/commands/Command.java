@@ -7,5 +7,6 @@ import javax.servlet.http.HttpServletRequest;
 
 public interface Command {
 
-    Page perform(HttpServletRequest request, ServletContext ctx);
+    Page performGet(HttpServletRequest request, ServletContext ctx);
+    Page performPost(HttpServletRequest request, ServletContext ctx);
 }

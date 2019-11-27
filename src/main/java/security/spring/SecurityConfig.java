@@ -46,6 +46,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .passwordParameter("password")
                 .permitAll()
                 .successForwardUrl("/postLogin")
+
+                //AuthenticationSuccessHandler
+
                 .failureUrl("/login?error=true")
                 .and()
                 .logout().logoutUrl("/logout")

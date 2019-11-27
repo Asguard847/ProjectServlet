@@ -1,10 +1,3 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: Asguard
-  Date: 10.06.2019
-  Time: 21:59
-  To change this template use File | Settings | File Templates.
---%>
 
 <%@include file="/WEB-INF/views/template/header.jsp"%>
 
@@ -12,39 +5,39 @@
 <div class="container-wrapper">
     <div class="container">
         <div class="page-header">
-            <h1>administrator page</h1>
-            <p class="lead">This is the administrator page</p>
+            <h1><fmt:message key = "admin.page"/></h1>
+            <p class="lead"><fmt:message key = "admin.this.page"/></p>
         </div>
 
         <h3>
-           <a href="<c:url value="/app/admin/assignments" />" >Manage assignments</a>
+           <a href="<c:url value="/app/admin/assignments" />" ><fmt:message key = "admin.assignments"/></a>
         </h3>
 
-        <p>Here you can view, check and modify assignments</p>
+        <p><fmt:message key = "admin.assignments.view"/></p>
 
         <br><br>
 
         <h3>
-            <a href="<c:url value="/app/admin/routes" />" >Manage routes</a>
+            <a href="<c:url value="/app/admin/routes" />" ><fmt:message key = "admin.routes"/></a>
         </h3>
 
-        <p>Here you can view, check and modify routes</p>
+        <p><fmt:message key = "admin.routes.view"/></p>
 
         <br><br>
 
         <h3>
-            <a href="<c:url value="/app/admin/buses" />" >Manage buses</a>
+            <a href="<c:url value="/app/admin/buses" />" ><fmt:message key = "admin.buses"/></a>
         </h3>
 
-        <p>Here you can view, check and modify buses</p>
+        <p><fmt:message key = "admin.buses.view"/></p>
 
         <br><br>
 
         <h3>
-           <a href="<c:url value="/app/admin/drivers" />" >Manage drivers</a>
+           <a href="<c:url value="/app/admin/drivers" />" ><fmt:message key = "admin.drivers"/></a>
         </h3>
 
-        <p>Here you can view, check and modify drivers</p>
+        <p><fmt:message key = "admin.drivers.view"/></p>
 
         <br><br>
 

@@ -2,8 +2,8 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
-<fmt:setLocale value="ru"/>
-<fmt:setBundle basename="login"/>
+<fmt:setLocale value="${locale}"/>
+<fmt:setBundle basename="app"/>
 <html>
 <head>
     <meta charset="utf-8">
@@ -12,12 +12,6 @@
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <meta name="description" content="">
     <meta name="author" content="">
-
-    <meta name="_csrf" content="${_csrf.token}"/>
-    <!-- default header name is X-CSRF-TOKEN -->
-    <meta name="_csrf_header" content="${_csrf.headerName}"/>
-
-
 
     <title>AutoPark management system</title>
 
@@ -65,17 +59,16 @@
                 <div id="navbar" class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">
                       <c:if test="${user.authority == 'ROLE_ADMIN'}">
-                         <li><a href="<c:url value="/app/admin"/> ">Admin</a></li>
+                         <li><a href="<c:url value="/app/admin"/> "><fmt:message key = "header.admin"/></a></li>
                       </c:if>
                     </ul>
                     <ul class="nav navbar-nav pull-right">
 
-                      <%--  Check if user is logged in--%>
-
+                           <li><a><fmt:message key = "header.choose"/></a></li>
+                           <li><a href="<c:url value="/app/setRu"/> ">rus</a></li>
+                           <li><a href="<c:url value="/app/setEn"/> ">en</a></li>
                         <c:if test="${user != null}">
-                            <li><a href="<c:url value="/app/logout"/> ">Logout</a></li>
-
-
+                            <li><a href="<c:url value="/app/logout"/> "><fmt:message key = "header.logout"/></a></li>
                         </c:if>
 
                     </ul>
