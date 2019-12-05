@@ -4,6 +4,7 @@
 
 <fmt:setLocale value="${locale}"/>
 <fmt:setBundle basename="app"/>
+
 <html>
 <head>
     <meta charset="utf-8">

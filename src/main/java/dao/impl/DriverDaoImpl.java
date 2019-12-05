@@ -9,7 +9,6 @@ import org.passay.CharacterRule;
 import org.passay.EnglishCharacterData;
 import org.passay.PasswordGenerator;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import web.Constants;
 
 import java.lang.invoke.MethodHandles;
 import java.sql.*;
@@ -137,7 +136,6 @@ public class DriverDaoImpl implements DriverDao {
                 }
 
                 String password = generatePassword();
-                LOG.info(password);
                 userStatement.setString(1, driver.getEmail());
                 userStatement.setString(2, encodePassword(password));
                 userStatement.setString(3, ROLE_USER);
@@ -146,7 +144,7 @@ public class DriverDaoImpl implements DriverDao {
 
                 connection.commit();
 
-                //TODO Send Email to User with credentials
+                LOG.info("Added user with password: " + driver.getEmail());
             }
         } catch (SQLException e) {
             LOG.error("Could not add driver " + driver.getId());
