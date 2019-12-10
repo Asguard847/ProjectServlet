@@ -3,8 +3,7 @@ package dao;
 import dao.impl.UserDaoImpl;
 import entity.User;
 import org.junit.Test;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
+import org.mindrot.jbcrypt.BCrypt;
 
 import static org.junit.Assert.*;
 
@@ -23,7 +22,6 @@ public class UserDaoImplTest {
 
     @Test
     public void testPassword(){
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        System.out.println(encoder.encode("admin"));
+        System.out.println(BCrypt.hashpw("admin", BCrypt.gensalt()));
     }
 }
