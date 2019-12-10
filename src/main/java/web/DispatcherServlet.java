@@ -1,5 +1,6 @@
 package web;
 
+import org.apache.log4j.Logger;
 import web.commands.Command;
 import web.commands.CommandFactory;
 
@@ -11,7 +12,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-
+import java.lang.invoke.MethodHandles;
 
 
 @WebServlet(value = "/app/*")
@@ -19,6 +20,9 @@ import java.io.IOException;
         maxFileSize = 1024 * 1024 * 10,
         maxRequestSize = 1024 * 1024 * 50)
 public class DispatcherServlet extends HttpServlet {
+
+    private static final Logger LOG = Logger.getLogger(MethodHandles.lookup().lookupClass());
+
 
     ServletContext ctx;
 
@@ -45,7 +49,7 @@ public class DispatcherServlet extends HttpServlet {
         int id = hasPathVariable(lastPathToken);
 
         if (id < 0) {
-            path = request.getRequestURI();
+            path = getUriWithoutJsessionId(request);
         }else{
             request.setAttribute("id", id);
             path = getPath(request);
@@ -73,21 +77,27 @@ public class DispatcherServlet extends HttpServlet {
         try {
             id = Integer.parseInt(lastPath);
         } catch (NumberFormatException e) {
-            return id;
+            LOG.error("Could not get path variable");
         }
         return id;
     }
 
     private String getLastPathToken(HttpServletRequest request) {
-        String uri = request.getRequestURI();
+        String uri = getUriWithoutJsessionId(request);
         int lastPath = uri.lastIndexOf('/');
         return uri.substring(lastPath + 1);
     }
 
     private String getPath(HttpServletRequest request){
-        String uri = request.getRequestURI();
+        String uri = getUriWithoutJsessionId(request);
         int lastPath = uri.lastIndexOf('/');
         return uri.substring(0, lastPath);
+    }
+
+    private String getUriWithoutJsessionId(HttpServletRequest request){
+        String fullUri = request.getRequestURI();
+        String[] tokens = fullUri.split(";");
+        return tokens[0];
     }
 }
 
