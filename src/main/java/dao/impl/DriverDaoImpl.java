@@ -4,11 +4,11 @@ import dao.ConnectionFactory;
 import dao.DriverDao;
 import entity.Driver;
 import org.apache.log4j.Logger;
+import org.mindrot.jbcrypt.BCrypt;
 import org.passay.CharacterData;
 import org.passay.CharacterRule;
 import org.passay.EnglishCharacterData;
 import org.passay.PasswordGenerator;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.lang.invoke.MethodHandles;
 import java.sql.*;
@@ -46,7 +46,6 @@ public class DriverDaoImpl implements DriverDao {
 
     private static final String ADD_USER_QUERY = "INSERT INTO users (username, password, authority, enabled) VALUES (?, ?, ?, ?);";
 
-    private BCryptPasswordEncoder encoder;
 
     @Override
     public List<Driver> getAllDrivers() {
@@ -262,10 +261,7 @@ public class DriverDaoImpl implements DriverDao {
     }
 
     private String encodePassword(String password) {
-        if (encoder == null) {
-            encoder = new BCryptPasswordEncoder();
-        }
-        return encoder.encode(password);
+        return BCrypt.hashpw(password, BCrypt.gensalt());
     }
 
     private Driver getDriverFromResultSet(ResultSet resultSet) throws SQLException {

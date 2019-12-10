@@ -3,7 +3,7 @@ package service.impl;
 import dao.UserDao;
 import dao.impl.UserDaoImpl;
 import entity.User;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.mindrot.jbcrypt.BCrypt;
 import service.UserService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -39,8 +39,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean validate(User user, String password) {
-
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        return encoder.matches(password, user.getPassword());
+        return BCrypt.checkpw(password, user.getPassword());
     }
 }

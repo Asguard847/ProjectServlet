@@ -4,7 +4,8 @@ import dao.ConnectionFactory;
 import dao.UserDao;
 import entity.User;
 import org.apache.log4j.Logger;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.mindrot.jbcrypt.BCrypt;
+
 
 import java.lang.invoke.MethodHandles;
 import java.sql.Connection;
@@ -29,7 +30,7 @@ public class UserDaoImpl implements UserDao {
             "SET password = ?, authority = ?, enabled = ? " +
             "WHERE username = ?;";
 
-    private BCryptPasswordEncoder encoder;
+
 
     @Override
     public User getUserByUsername(String username) {
@@ -104,9 +105,6 @@ public class UserDaoImpl implements UserDao {
     }
 
     private String encodePassword(String password) {
-        if (encoder == null) {
-            encoder = new BCryptPasswordEncoder();
-        }
-        return encoder.encode(password);
+        return BCrypt.hashpw(password, BCrypt.gensalt());
     }
 }
