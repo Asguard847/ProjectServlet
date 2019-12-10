@@ -9,9 +9,10 @@ Intellij Idea, Maven, Java 11+, MySql
 Установка:
 1.Клинировать проект в Intellij Idea.
 2.Запустить resources/scripts/create_schema.sql
-3.Выполнить команду mvn clean install
-4.Выполнить команду mvn tomcat7:run
-5.Имя пользователя администратора: admin 
+3.Запустить resources/scripts/populate_schema.sql
+4.Выполнить команду mvn clean install
+5.Выполнить команду mvn tomcat7:run
+6.Имя пользователя администратора: admin 
 Пароль администратора: admin
 
 
