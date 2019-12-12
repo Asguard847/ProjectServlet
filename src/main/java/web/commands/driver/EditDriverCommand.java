@@ -42,7 +42,8 @@ public class EditDriverCommand implements Command {
         }
 
         int id = (Integer) request.getAttribute("id");
-        driverService.updateDriver(request);
+        Driver driver = DriverServiceImpl.getDriverFromRequest(request);
+        driverService.updateDriver(driver, id);
         ImageUtils.saveImage(request, id);
         LOG.info("Driver updated: " + id);
         return new Page("/app/admin/drivers", true);

@@ -9,7 +9,7 @@
             <p class="lead"><fmt:message key = "edit.driver.fill"/></p>
         </div>
 
-         <form name="addDriverForm" action="<c:url value="/app/admin/drivers/editDriver/${driver.id}"/>" method="post" enctype="multipart/form-data">
+         <form name="addDriverForm" action="${pageContext.request.contextPath}/app/admin/drivers/editDriver/${driver.id}" method="post" enctype="multipart/form-data">
 
 
 

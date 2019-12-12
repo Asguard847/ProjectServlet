@@ -1,8 +1,10 @@
 package web.commands.driver;
 
+import entity.Driver;
 import service.DriverService;
 import service.impl.DriverServiceImpl;
 import web.Constants;
+import web.ImageUtils;
 import web.Page;
 import web.commands.Command;
 
@@ -27,7 +29,9 @@ public class AddDriverCommand implements Command {
             return new Page(PREFIX + "addDriver" + POSTFIX);
         }
 
-        driverService.addDriver(request);
+        Driver driver = DriverServiceImpl.getDriverFromRequest(request);
+        int driverId = driverService.addDriver(driver);
+        ImageUtils.saveImage(request, driverId);
         return new Page("/app/admin/drivers", true);
     }
 }

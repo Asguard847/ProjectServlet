@@ -27,10 +27,10 @@
     <script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
 
     <!-- Bootstrap core CSS -->
-    <link href="<c:url value="/resources/css/bootstrap.min.css" />" rel="stylesheet">
+    <link href="${pageContext.request.contextPath}/resources/css/bootstrap.min.css"  rel="stylesheet">
 
     <!-- Main CSS -->
-    <link href="<c:url value="/resources/css/main.css" />" rel="stylesheet">
+    <link href="${pageContext.request.contextPath}/resources/css/main.css" rel="stylesheet">
 
     <link href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" rel="stylesheet">
 
@@ -60,16 +60,16 @@
                 <div id="navbar" class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">
                       <c:if test="${user.authority == 'ROLE_ADMIN'}">
-                         <li><a href="<c:url value="/app/admin"/> "><fmt:message key = "header.admin"/></a></li>
+                         <li><a href="${pageContext.request.contextPath}/app/admin"/> <fmt:message key = "header.admin"/></a></li>
                       </c:if>
                     </ul>
                     <ul class="nav navbar-nav pull-right">
 
                            <li><a><fmt:message key = "header.choose"/></a></li>
-                           <li><a href="<c:url value="/app/setRu"/> ">rus</a></li>
-                           <li><a href="<c:url value="/app/setEn"/> ">en</a></li>
+                           <li><a href="${pageContext.request.contextPath}/app/setRu"/> rus</a></li>
+                           <li><a href="${pageContext.request.contextPath}/app/setEn"/> en</a></li>
                         <c:if test="${user != null}">
-                            <li><a href="<c:url value="/app/logout"/> "><fmt:message key = "header.logout"/></a></li>
+                            <li><a href="${pageContext.request.contextPath}/app/logout"/> <fmt:message key = "header.logout"/></a></li>
                         </c:if>
 
                     </ul>

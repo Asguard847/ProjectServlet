@@ -3,7 +3,9 @@
 -- Host: localhost    Database: projectservlet
 -- ------------------------------------------------------
 -- Server version	8.0.18
-
+DROP SCHEMA IF EXISTS 'projectservlet';
+CREATE SCHEMA 'projectservlet';
+USE 'projectservlet';
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
@@ -48,12 +50,8 @@ CREATE TABLE `buses` (
   `route_id` int(11) DEFAULT NULL,
   `driver_id` int(11) DEFAULT NULL,
   `ready` tinyint(1) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `c_bus` (`route_id`),
-  KEY `driver_id` (`driver_id`),
-  CONSTRAINT `buses_ibfk_1` FOREIGN KEY (`driver_id`) REFERENCES `drivers` (`id`),
-  CONSTRAINT `c_bus` FOREIGN KEY (`route_id`) REFERENCES `routes` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`id`)
+  ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --

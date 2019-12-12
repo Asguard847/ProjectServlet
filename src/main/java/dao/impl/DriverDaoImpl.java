@@ -143,7 +143,7 @@ public class DriverDaoImpl implements DriverDao {
 
                 connection.commit();
 
-                LOG.info("Added user with password: " + driver.getEmail());
+                LOG.info("Added user " + driver.getEmail() + " with password: " + password);
             }
         } catch (SQLException e) {
             LOG.error("Could not add driver " + driver.getId());
@@ -155,13 +155,21 @@ public class DriverDaoImpl implements DriverDao {
     @Override
     public void deleteDriver(int id) {
         try (Connection connection = ConnectionFactory.getConnection();
-             PreparedStatement statement = connection.prepareStatement(DELETE_QUERY)) {
+             PreparedStatement statement = connection.prepareStatement(DELETE_QUERY);
+             PreparedStatement busStatement = connection.prepareStatement(REMOVE_FROM_BUS_QUERY)) {
+
+            connection.setAutoCommit(false);
 
             statement.setInt(1, id);
             statement.executeUpdate();
 
+            busStatement.setInt(1, id);
+            busStatement.executeUpdate();
+
+            connection.commit();
+
         } catch (SQLException e) {
-            LOG.error("Could not delete driver " + id);
+            LOG.error(e.getMessage());
         }
     }
 

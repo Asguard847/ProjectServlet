@@ -11,7 +11,7 @@
                 <div class="msg">${msg}</div>
             </c:if>
 
-            <form name="loginForm" action="<c:url value="/app/login" />" method="post">
+            <form name="loginForm" action="${pageContext.request.contextPath}/app/login" method="post">
                 <c:if test="${not empty error}">
                     <div class="error" style="color: #ff0000">${error }</div>
                 </c:if>

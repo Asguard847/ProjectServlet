@@ -1,5 +1,6 @@
 package web.commands.route;
 
+import entity.Route;
 import service.RouteService;
 import service.impl.RouteServiceImpl;
 import web.Page;
@@ -23,8 +24,8 @@ public class AddRouteCommand implements Command {
         if(routeService.validateRouteInput(request)){
             return new Page(PREFIX + "addRoute" + POSTFIX);
         }
-
-        routeService.addRoute(request);
+        Route route = RouteServiceImpl.getRouteFromRequest(request);
+        routeService.addRoute(route);
         return new Page("/app/admin/routes", true);
     }
 }

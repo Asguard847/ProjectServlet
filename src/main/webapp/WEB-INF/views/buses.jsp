@@ -15,7 +15,7 @@
         <div class="page-header">
             <h1><fmt:message key = "bus.header"/></h1>
             <p class="lead"><fmt:message key = "bus.this"/></p>
-            <a href="<c:url value="/app/admin/buses/addBus" />"class="btn btn-primary"><fmt:message key = "button.add"/></a>
+            <a href="${pageContext.request.contextPath}/app/admin/buses/addBus" class="btn btn-primary"><fmt:message key = "button.add"/></a>
         </div>
 
 
@@ -46,16 +46,16 @@
                              </c:otherwise>
                     </c:choose></td>
                     <td>
-                        <a href="<c:url value="/app/admin/buses/deleteBus/${bus.id}"/>">
+                        <a href="${pageContext.request.contextPath}/app/admin/buses/deleteBus/${bus.id}">
                             <button type="button" class="btn btn-danger"><fmt:message key = "button.delete"/></button></a>
-                        <a href="<c:url value="/app/admin/buses/editBus/${bus.id}"/>">
+                        <a href="${pageContext.request.contextPath}/app/admin/buses/editBus/${bus.id}">
                             <button type="button" class="btn btn-warning"><fmt:message key = "button.edit"/></button></a>
                     </td>
                 </tr>
             </c:forEach>
         </table>
 
-        <a href="<c:url value="/app/admin/buses/addBus" />"class="btn btn-primary"><fmt:message key = "button.add"/></a>
+        <a href="${pageContext.request.contextPath}/app/admin/buses/addBus" class="btn btn-primary"><fmt:message key = "button.add"/></a>
 
 
 <%@include file="/WEB-INF/views/template/footer.jsp"%>

@@ -21,6 +21,7 @@ import static web.Constants.*;
 public class EditBusCommand implements Command {
 
     private static final Logger LOG = Logger.getLogger(MethodHandles.lookup().lookupClass());
+    private static final String DRIVER_SELECT = "driverSelect";
 
     @Override
     public Page performGet(HttpServletRequest request, ServletContext ctx) {
@@ -44,7 +45,14 @@ public class EditBusCommand implements Command {
 
         BusService busService = (BusServiceImpl) ctx.getAttribute(BUS_SERVICE);
         int id = (Integer) request.getAttribute("id");
-        busService.updateBus(request);
+        Bus bus = BusServiceImpl.getBusFromRequest(request);
+        bus.setId(id);
+        int driverId = 0;
+        String driverIdString = request.getParameter(DRIVER_SELECT);
+        if (!driverIdString.equals("none")) {
+            driverId = Integer.parseInt(driverIdString);
+        }
+        busService.updateBus(bus, driverId, ctx);
         LOG.info("Bus updated: " + id);
         return new Page("/app/admin/buses", true);
     }

@@ -26,7 +26,8 @@ public class LoginCommand implements Command {
     public Page performPost(HttpServletRequest request, ServletContext ctx) {
         UserService userService = (UserServiceImpl) ctx.getAttribute(USER_SERVICE);
 
-        User user = userService.getUserByUsername(request);
+        String username = request.getParameter("username");
+        User user = userService.getUserByUsername(username);
 
         if(user == null){
             request.setAttribute("msg", USER_NOT_FOUND_MSG);

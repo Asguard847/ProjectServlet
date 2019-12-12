@@ -8,6 +8,7 @@ import service.AssignmentService;
 import service.BusService;
 import service.DriverService;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
@@ -33,11 +34,9 @@ public class BusServiceImpl implements BusService {
     }
 
     @Override
-    public List<Bus> getAllBuses(HttpServletRequest request) {
+    public List<Bus> getAllBuses() {
 
-        List<Bus> buses = busDao.getAllBuses();
-        request.setAttribute("buses", buses);
-        return buses;
+        return busDao.getAllBuses();
     }
 
     @Override
@@ -52,9 +51,8 @@ public class BusServiceImpl implements BusService {
     }
 
     @Override
-    public int addBus(HttpServletRequest request) {
+    public int addBus(Bus bus) {
 
-        Bus bus = getBusFromRequest(request);
         return busDao.addBus(bus);
     }
 
@@ -64,36 +62,33 @@ public class BusServiceImpl implements BusService {
     }
 
     @Override
-    public void updateBus(HttpServletRequest request) {
+    public void updateBus(Bus bus, int driverId, ServletContext ctx) {
 
-        DriverService driverService = (DriverServiceImpl) request.getServletContext()
-                .getAttribute(DRIVER_SERVICE);
-        AssignmentService assignmentService = (AssignmentServiceImpl) request.getServletContext()
-                .getAttribute(ASSIGNMENT_SERVICE);
+        DriverService driverService = (DriverServiceImpl) ctx.getAttribute(DRIVER_SERVICE);
+        AssignmentService assignmentService =
+                (AssignmentServiceImpl) ctx.getAttribute(ASSIGNMENT_SERVICE);
 
-        int id = (Integer) request.getAttribute(ID);
-        String ready = request.getParameter(READY);
-        String driverId = request.getParameter(DRIVER_SELECT);
+        int id = bus.getId();
+        boolean ready = bus.isReady();
 
-        Bus bus = getBusById(id);
-        Driver oldDriver = bus.getDriver();
+        Bus oldBus = getBusById(id);
+        Driver oldDriver = oldBus.getDriver();
 
-        if ("true".equals(ready)) {
+        if (ready) {
             setReady(id);
 
-            if ("none".equals(driverId)) {
+            if (driverId == 0) {
                 if (oldDriver != null) {
-                    bus.setDriver(null);
+                    oldBus.setDriver(null);
                     driverService.setFree(oldDriver.getId(), true);
                     assignmentService.cancelForDriver(oldDriver.getId());
                 }
             } else {
 
                 Driver newDriver = new Driver();
-                int newDriverId = Integer.parseInt(driverId);
-                newDriver.setId(newDriverId);
-                bus.setDriver(newDriver);
-                driverService.setFree(newDriverId, false);
+                newDriver.setId(driverId);
+                oldBus.setDriver(newDriver);
+                driverService.setFree(driverId, false);
 
                 if (oldDriver != null) {
                     driverService.setFree(oldDriver.getId(), true);
@@ -102,15 +97,15 @@ public class BusServiceImpl implements BusService {
             }
         } else {
             setNotReady(id);
-            bus.setDriver(null);
+            oldBus.setDriver(null);
             if (oldDriver != null) {
                 driverService.setFree(oldDriver.getId(), true);
                 assignmentService.cancelForDriver(oldDriver.getId());
             }
         }
-        bus.setNumber(request.getParameter(NUMBER));
-        bus.setModel(request.getParameter(MODEL));
-        busDao.updateBus(bus);
+        oldBus.setNumber(bus.getNumber());
+        oldBus.setModel(bus.getModel());
+        busDao.updateBus(oldBus);
     }
 
     @Override
@@ -145,17 +140,14 @@ public class BusServiceImpl implements BusService {
     }
 
     @Override
-    public void addBusToRoute(HttpServletRequest request) {
+    public void addBusToRoute(String busId, int routeId) {
 
-        String busId = request.getParameter("busSelect");
-        int routeId = (Integer) request.getAttribute("id");
         busDao.setRoute(Integer.parseInt(busId), routeId);
     }
 
     @Override
-    public void removeBusFromRoute(HttpServletRequest request) {
+    public void removeBusFromRoute(int busId) {
 
-        int busId = (Integer)request.getAttribute("id");
         busDao.setRoute(busId, 0);
     }
 
@@ -167,16 +159,21 @@ public class BusServiceImpl implements BusService {
         return model == null || model.isEmpty();
     }
 
-    private Bus getBusFromRequest(HttpServletRequest request) {
+    public static Bus getBusFromRequest(HttpServletRequest request) {
 
         String number = request.getParameter(NUMBER);
         String model = request.getParameter(MODEL);
+        String ready = request.getParameter(READY);
 
         Bus bus = new Bus();
         bus.setNumber(number);
         bus.setModel(model);
-        bus.setReady(true);
 
+        if(ready == null) {
+            bus.setReady(true);
+        }else{
+            bus.setReady(Boolean.parseBoolean(ready));
+        }
         return bus;
     }
 }
