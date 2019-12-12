@@ -10,7 +10,7 @@
         </div>
 
 
-         <form name="addDriverForm" action="<c:url value="/app/admin/buses/editBus/${bus.id}"/>" method="post">
+         <form name="addDriverForm" action="${pageContext.request.contextPath}/app/admin/buses/editBus/${bus.id}" method="post">
 
             <c:if test="${not empty numberVal}">
                 <div class="error" style="color: #ff0000">${numberVal}</div>

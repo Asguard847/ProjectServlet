@@ -31,7 +31,7 @@ public class RemoveBusFromRouteCommand implements Command {
         Bus bus = busService.getBusById(busId);
         int routeId = bus.getRoute().getId();
 
-        busService.removeBusFromRoute(request);
+        busService.removeBusFromRoute(busId);
         assignmentService.cancelForDriver(bus.getDriver().getId());
 
         Route route = routeService.getRouteById(routeId);

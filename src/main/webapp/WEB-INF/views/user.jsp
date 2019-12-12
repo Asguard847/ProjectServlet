@@ -37,7 +37,7 @@
                            <td>
                             <c:choose>
                             <c:when test="${assignment.approved == null}">
-                                    <a href="<c:url value="/app/user/approve/${assignment.id}"/>">
+                                    <a href="${pageContext.request.contextPath}/app/user/approve/${assignment.id}">
                                    <button type="button" class="btn btn-danger"><fmt:message key = "user.approve"/></button></a>
                                  </c:when>
                                  <c:otherwise>

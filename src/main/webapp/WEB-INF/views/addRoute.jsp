@@ -9,7 +9,7 @@
             <p class="lead"><fmt:message key = "add.routes.fill"/></p>
         </div>
 
-         <form name="addRouteForm" action="<c:url value="/app/admin/routes/addRoute"/>" method="post">
+         <form name="addRouteForm" action="${pageContext.request.contextPath}/app/admin/routes/addRoute" method="post">
 
         <c:if test="${not empty numberVal}">
             <div class="error" style="color: #ff0000">${numberVal}</div>

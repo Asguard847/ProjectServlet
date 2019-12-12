@@ -13,11 +13,16 @@ import static web.Constants.DRIVER_SERVICE;
 
 public class DeleteDriverCommand implements Command {
 
+    private static final String ID = "id";
+
     @Override
     public Page performGet(HttpServletRequest request, ServletContext ctx) {
 
         DriverService driverService = (DriverServiceImpl) ctx.getAttribute(DRIVER_SERVICE);
-        driverService.deleteDriver(request);
+
+        int id = (Integer) request.getAttribute(ID);
+        driverService.deleteDriver(id);
+        ImageUtils.deleteImage(request, id);
 
         return new Page("/app/admin/drivers", true);
     }

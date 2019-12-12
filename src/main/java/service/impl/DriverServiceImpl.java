@@ -60,28 +60,22 @@ public class DriverServiceImpl implements DriverService {
     }
 
     @Override
-    public void addDriver(HttpServletRequest request) {
+    public int addDriver(Driver driver) {
 
-        Driver driver = getDriverFromRequest(request);
         int driverId = driverDao.addDriver(driver);
-        ImageUtils.saveImage(request, driverId);
         LOG.info("Driver persisted: " + driverId);
+        return driverId;
     }
 
     @Override
-    public void deleteDriver(HttpServletRequest request) {
-
-        int id = (Integer) request.getAttribute(ID);
+    public void deleteDriver(int id) {
         driverDao.deleteDriver(id);
-        ImageUtils.deleteImage(request, id);
         LOG.info("Driver deleted: " + id);
     }
 
     @Override
-    public void updateDriver(HttpServletRequest request) {
+    public void updateDriver(Driver driver, int id) {
 
-        Driver driver = getDriverFromRequest(request);
-        int id = (Integer)request.getAttribute(ID);
         driver.setId(id);
         driverDao.updateDriver(driver);
     }
@@ -161,7 +155,7 @@ public class DriverServiceImpl implements DriverService {
         return !matchesPattern(email, EMAIL_PATTERN);
     }
 
-    private Driver getDriverFromRequest(HttpServletRequest request){
+    public static Driver getDriverFromRequest(HttpServletRequest request){
 
         String firstName = request.getParameter(FIRST_NAME);
         String lastName = request.getParameter(LAST_NAME);

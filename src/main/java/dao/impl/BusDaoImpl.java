@@ -163,13 +163,19 @@ public class BusDaoImpl implements BusDao {
     public void updateBus(Bus bus) {
 
         try (Connection connection = ConnectionFactory.getConnection();
-             PreparedStatement statement = connection.prepareStatement(UPDATE_QUERY)) {
+             PreparedStatement statement = connection.prepareStatement(UPDATE_QUERY);
+             PreparedStatement routeStatement = connection.prepareStatement(SET_ROUTE_QUERY)) {
+
+            connection.setAutoCommit(false);
 
             statement.setString(1, bus.getModel());
             statement.setString(2, bus.getNumber());
 
             if (bus.getDriver() == null) {
                 statement.setNull(3, 0);
+                routeStatement.setNull(1, 0);
+                routeStatement.setInt(2, bus.getId());
+                routeStatement.executeUpdate();
             } else {
                 statement.setInt(3, bus.getDriver().getId());
             }
@@ -177,8 +183,11 @@ public class BusDaoImpl implements BusDao {
 
             statement.executeUpdate();
 
+            connection.commit();
+
         } catch (SQLException e) {
             LOG.error("Could not update bus " + bus.getId());
+            LOG.error(e.getMessage());
 
         }
     }

@@ -49,7 +49,7 @@ public class DispatcherServlet extends HttpServlet {
         int id = hasPathVariable(lastPathToken);
 
         if (id < 0) {
-            path = getUriWithoutJsessionId(request);
+            path = request.getRequestURI();
         }else{
             request.setAttribute("id", id);
             path = getPath(request);
@@ -76,28 +76,20 @@ public class DispatcherServlet extends HttpServlet {
         int id = -1;
         try {
             id = Integer.parseInt(lastPath);
-        } catch (NumberFormatException e) {
-            LOG.error("Could not get path variable");
-        }
+        } catch (NumberFormatException e) {}
         return id;
     }
 
     private String getLastPathToken(HttpServletRequest request) {
-        String uri = getUriWithoutJsessionId(request);
+        String uri = request.getRequestURI();
         int lastPath = uri.lastIndexOf('/');
         return uri.substring(lastPath + 1);
     }
 
     private String getPath(HttpServletRequest request){
-        String uri = getUriWithoutJsessionId(request);
+        String uri = request.getRequestURI();
         int lastPath = uri.lastIndexOf('/');
         return uri.substring(0, lastPath);
-    }
-
-    private String getUriWithoutJsessionId(HttpServletRequest request){
-        String fullUri = request.getRequestURI();
-        String[] tokens = fullUri.split(";");
-        return tokens[0];
     }
 }
 

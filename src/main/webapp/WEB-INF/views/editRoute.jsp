@@ -9,7 +9,7 @@
             <p class="lead"><fmt:message key = "edit.routes.fill"/></p>
         </div>
 
-         <form name="addRouteForm" action="<c:url value="/app/admin/routes/editRoute/${route.id}"/>" method="post">
+         <form name="addRouteForm" action="${pageContext.request.contextPath}/app/admin/routes/editRoute/${route.id}" method="post">
 
         <c:if test="${not empty numberVal}">
             <div class="error" style="color: #ff0000">${numberVal}</div>
@@ -70,7 +70,7 @@
                             <td>${bus.driver.firstName} ${bus.driver.lastName}</td>
 
                             <td>
-                                <a href="<c:url value="/app/admin/routes/deleteBusFromRoute/${bus.id}"/>">
+                                <a href="${pageContext.request.contextPath}/app/admin/routes/deleteBusFromRoute/${bus.id}">
                                     <button type="button" class="btn btn-danger"><fmt:message key = "button.delete"/></button></a>
                             </td>
                         </tr>

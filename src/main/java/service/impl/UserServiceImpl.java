@@ -17,8 +17,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUserByUsername(HttpServletRequest request) {
-        String username = request.getParameter("username");
+    public User getUserByUsername(String username) {
         return userDao.getUserByUsername(username);
     }
 

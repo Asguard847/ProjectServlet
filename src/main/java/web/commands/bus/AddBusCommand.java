@@ -1,5 +1,6 @@
 package web.commands.bus;
 
+import entity.Bus;
 import org.apache.log4j.Logger;
 import service.BusService;
 import service.impl.BusServiceImpl;
@@ -29,8 +30,8 @@ public class AddBusCommand implements Command {
         if (busService.validateBusInput(request)) {
             return new Page(PREFIX + "addBus" + POSTFIX);
         }
-
-        int id = busService.addBus(request);
+        Bus bus = BusServiceImpl.getBusFromRequest(request);
+        int id = busService.addBus(bus);
         LOG.info("Bus persisted: " + id);
         return new Page("/app/admin/buses", true);
     }

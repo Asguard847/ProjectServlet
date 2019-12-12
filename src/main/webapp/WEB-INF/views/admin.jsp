@@ -10,7 +10,7 @@
         </div>
 
         <h3>
-           <a href="<c:url value="/app/admin/assignments" />" ><fmt:message key = "admin.assignments"/></a>
+           <a href="${pageContext.request.contextPath}/app/admin/assignments" ><fmt:message key = "admin.assignments"/></a>
         </h3>
 
         <p><fmt:message key = "admin.assignments.view"/></p>
@@ -18,7 +18,7 @@
         <br><br>
 
         <h3>
-            <a href="<c:url value="/app/admin/routes" />" ><fmt:message key = "admin.routes"/></a>
+            <a href="${pageContext.request.contextPath}/app/admin/routes"  ><fmt:message key = "admin.routes"/></a>
         </h3>
 
         <p><fmt:message key = "admin.routes.view"/></p>
@@ -26,7 +26,7 @@
         <br><br>
 
         <h3>
-            <a href="<c:url value="/app/admin/buses" />" ><fmt:message key = "admin.buses"/></a>
+            <a href="${pageContext.request.contextPath}/app/admin/buses" ><fmt:message key = "admin.buses"/></a>
         </h3>
 
         <p><fmt:message key = "admin.buses.view"/></p>
@@ -34,7 +34,7 @@
         <br><br>
 
         <h3>
-           <a href="<c:url value="/app/admin/drivers" />" ><fmt:message key = "admin.drivers"/></a>
+           <a href="${pageContext.request.contextPath}/app/admin/drivers"><fmt:message key = "admin.drivers"/></a>
         </h3>
 
         <p><fmt:message key = "admin.drivers.view"/></p>

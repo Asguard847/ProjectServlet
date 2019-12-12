@@ -15,7 +15,7 @@
         <div class="page-header">
             <h1><fmt:message key = "driver.header"/></h1>
             <p class="lead"><fmt:message key = "driver.this"/></p>
-            <a href="<c:url value="/app/admin/drivers/addDriver" />"class="btn btn-primary"><fmt:message key = "driver.add"/></a>
+            <a href="${pageContext.request.contextPath}/app/admin/drivers/addDriver" class="btn btn-primary"><fmt:message key = "driver.add"/></a>
         </div>
 
 
@@ -33,24 +33,24 @@
             </thead>
             <c:forEach items="${drivers}" var="driver">
                 <tr>
-                    <td><img src="<c:url value="/resources/images/${driver.id}.png"/>" alt="image" style="width: 100%" /></td>
+                    <td><img src="${pageContext.request.contextPath}/resources/images/${driver.id}.png" alt="image" style="width: 100%" /></td>
                     <td>${driver.firstName}</td>
                     <td>${driver.lastName}</td>
                     <td>${driver.phoneNumber}</td>
                     <td><c:choose>
                              <c:when test="${driver.ready==true}">
-                             <a href="<c:url value="/app/admin/drivers/setNotReady/${driver.id}"/>">
+                             <a href="${pageContext.request.contextPath}/app/admin/drivers/setNotReady/${driver.id}">
                                   <p style="color: green"><fmt:message key = "driver.ready"/></p>
                              </c:when>
                              <c:otherwise>
-                              <a href="<c:url value="/app/admin/drivers/setReady/${driver.id}"/>">
+                              <a href="${pageContext.request.contextPath}/app/admin/drivers/setReady/${driver.id}">
                                   <p style="color: crimson"><fmt:message key = "driver.notready"/></p>
                              </c:otherwise>
                     </c:choose></td>
                     <td>
-                        <a href="<c:url value="/app/admin/drivers/deleteDriver/${driver.id}"/>">
+                        <a href="${pageContext.request.contextPath}/app/admin/drivers/deleteDriver/${driver.id}">
                             <button type="button" class="btn btn-danger"><fmt:message key = "button.delete"/></button></a>
-                        <a href="<c:url value="/app/admin/drivers/editDriver/${driver.id}"/>">
+                        <a href="${pageContext.request.contextPath}/app/admin/drivers/editDriver/${driver.id}">
                             <button type="button" class="btn btn-warning"><fmt:message key = "button.edit"/></button></a>
                     </td>
 
@@ -58,7 +58,7 @@
             </c:forEach>
         </table>
 
-        <a href="<c:url value="/app/admin/drivers/addDriver" />"class="btn btn-primary"><fmt:message key = "driver.add"/></a>
+        <a href="${pageContext.request.contextPath}/app/admin/drivers/addDriver" class="btn btn-primary"><fmt:message key = "driver.add"/></a>
 
 
 <%@include file="/WEB-INF/views/template/footer.jsp"%>

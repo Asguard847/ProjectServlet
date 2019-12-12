@@ -27,11 +27,10 @@ public class AssignmentServiceImpl implements AssignmentService {
     }
 
     @Override
-    public void addAssignment(HttpServletRequest request, ServletContext ctx) {
+    public void addAssignment(String busId, ServletContext ctx) {
 
         BusService busService = (BusServiceImpl) ctx.getAttribute(BUS_SERVICE);
 
-        String busId = request.getParameter("busSelect");
         Bus bus = busService.getBusById(Integer.parseInt(busId));
 
         Assignment assignment = new Assignment();

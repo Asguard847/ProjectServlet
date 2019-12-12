@@ -9,7 +9,7 @@ import java.util.List;
 public interface AssignmentService {
 
     List<Assignment> getAllAssignments();
-    void addAssignment(HttpServletRequest request, ServletContext ctx);
+    void addAssignment(String busId, ServletContext ctx);
     List<Assignment> getAllAssignmentsForDriver(int driverId);
     void deleteAssignment(int id);
     void setApproved(int id);

@@ -51,23 +51,18 @@ public class RouteServiceImpl implements RouteService {
     }
 
     @Override
-    public void addRoute(HttpServletRequest request) {
+    public void addRoute(Route route) {
 
-        Route route = getRouteFromRequest(request);
         routeDao.addRoute(route);
     }
 
     @Override
-    public void deleteRoute(HttpServletRequest request) {
-
-        int id = (Integer) request.getAttribute(ID);
+    public void deleteRoute(int id) {
         routeDao.deleteRoute(id);
     }
 
     @Override
-    public void updateRoute(HttpServletRequest request) {
-
-        Route route = getRouteFromRequest(request);
+    public void updateRoute(Route route) {
         routeDao.updateRoute(route);
     }
 
@@ -110,7 +105,7 @@ public class RouteServiceImpl implements RouteService {
         return timeBothSides / route.getBuses().size();
     }
 
-    private Route getRouteFromRequest(HttpServletRequest request){
+    public static Route getRouteFromRequest(HttpServletRequest request){
 
         String number = request.getParameter(NUMBER);
         String start = request.getParameter(START);

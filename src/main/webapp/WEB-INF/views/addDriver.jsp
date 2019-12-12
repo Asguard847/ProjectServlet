@@ -9,7 +9,7 @@
             <p class="lead"><fmt:message key = "add.driver.fill"/></p>
         </div>
 
-         <form name="addDriverForm" action="<c:url value="/app/admin/drivers/addDriver"/>" method="post" enctype="multipart/form-data">
+         <form name="addDriverForm" action="${pageContext.request.contextPath}/app/admin/drivers/addDriver" method="post" enctype="multipart/form-data">
 
          <c:if test="${not empty fNameVal}">
                <div class="error" style="color: #ff0000">${fNameVal}</div>

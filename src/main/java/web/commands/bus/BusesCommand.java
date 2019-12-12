@@ -20,7 +20,8 @@ public class BusesCommand implements Command {
     public Page performGet(HttpServletRequest request, ServletContext ctx) {
 
         BusService service = (BusServiceImpl) ctx.getAttribute(BUS_SERVICE);
-        service.getAllBuses(request);
+        List<Bus> buses = service.getAllBuses();
+        request.setAttribute("buses", buses);
         return new Page(PREFIX + "buses" + POSTFIX);
     }
 

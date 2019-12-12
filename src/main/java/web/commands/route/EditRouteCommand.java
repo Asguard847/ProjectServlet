@@ -50,13 +50,15 @@ public class EditRouteCommand implements Command {
             return new Page(PREFIX + "editRoute" + POSTFIX);
         }
 
-        routeService.updateRoute(request);
+        Route route = RouteServiceImpl.getRouteFromRequest(request);
+        routeService.updateRoute(route);
         if ("none".equals(busId)) {
             return new Page("/app/admin/routes", true);
         }
 
-        busService.addBusToRoute(request);
-        assignmentService.addAssignment(request, ctx);
+        int routeId = (Integer) request.getAttribute("id");
+        busService.addBusToRoute(busId, routeId);
+        assignmentService.addAssignment(busId, ctx);
 
         //TODO send user email notification with new assignment
 

@@ -12,10 +12,13 @@ import static web.Constants.ROUTE_SERVICE;
 
 public class DeleteRouteCommand implements Command {
 
+    private static final String ID = "id";
+
     @Override
     public Page performGet(HttpServletRequest request, ServletContext ctx) {
         RouteService routeService = (RouteServiceImpl) ctx.getAttribute(ROUTE_SERVICE);
-        routeService.deleteRoute(request);
+        int id = (Integer) request.getAttribute(ID);
+        routeService.deleteRoute(id);
         return new Page("/app/admin/routes", true);
     }
 

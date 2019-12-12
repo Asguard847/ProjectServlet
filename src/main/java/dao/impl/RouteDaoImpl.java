@@ -46,6 +46,8 @@ public class RouteDaoImpl implements RouteDao {
     private static final String DELETE_QUERY = "DELETE FROM routes WHERE id = ?;";
     private static final String UPDATE_QUERY = "UPDATE routes SET number = ?, " +
             "start_point = ?, end_point = ?, length = ? WHERE id = ?;";
+    private static final String REMOVE_BUS_FROM_ROUTE_QUERY = "UPDATE buses SET route_id = null WHERE " +
+            "route_id = ?";
 
     @Override
     public List<Route> getAllRoutes() {
@@ -115,10 +117,18 @@ public class RouteDaoImpl implements RouteDao {
     @Override
     public void deleteRoute(int id) {
         try (Connection connection = ConnectionFactory.getConnection();
-             PreparedStatement statement = connection.prepareStatement(DELETE_QUERY)) {
+             PreparedStatement statement = connection.prepareStatement(DELETE_QUERY);
+             PreparedStatement busStatement = connection.prepareStatement(REMOVE_BUS_FROM_ROUTE_QUERY)) {
+
+            connection.setAutoCommit(false);
 
             statement.setInt(1, id);
             statement.executeUpdate();
+
+            busStatement.setInt(1, id);
+            statement.executeUpdate();
+
+            connection.commit();
 
         } catch (SQLException e) {
             LOG.error("Could not delete route " + id);
